@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "tornradio_server",
   "version": "1.0.0",
   "description": "",
@@ -17,6 +18,8 @@
   },
   "homepage": "https://github.com/YangLeda/TornRadio_Server#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.0"
   }
 }
