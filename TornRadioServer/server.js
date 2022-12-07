@@ -11,6 +11,8 @@ const FACTION_ID_1 = "37595";
 
 let playerCache = new Map();
 
+logger("start");
+
 fetchAllFactionMembersToCache(FACTION_ID_1);
 setInterval(async () => {
   fetchAllFactionMembersToCache(FACTION_ID_1);
@@ -48,15 +50,15 @@ async function fetchFaction(factionId) {
     const json = await res.json();
     let memberSize = Object.keys(json.members).length;
     memberSize = memberSize ? memberSize : "error";
-    console.log("fetchFaction done with memberSize " + memberSize);
+    logger("fetchFaction done with memberSize " + memberSize);
     return json;
   } catch (err) {
-    console.log(err);
+    logger(err);
   }
 }
 
 async function fetchAllFactionMembersToCache(factionId) {
-  console.log("fetchAllFactionMembersToCache() start " + factionId);
+  logger("fetchAllFactionMembersToCache() start " + factionId);
   const factionJson = await fetchFaction(factionId);
   const memberIds = Object.keys(factionJson.members);
 
@@ -69,16 +71,16 @@ async function fetchAllFactionMembersToCache(factionId) {
       const json = await res.json();
       cachePlayer(memberIds[requestCount], json);
     } catch (err) {
-      console.log(err);
+      logger(err);
     }
 
     requestCount++;
     if (requestCount > MAX_REQUEST_NUM || requestCount > memberIds.length - 1) {
-      console.log("fetchAllFactionMembersToCache stopped because MAX_REQUEST_NUM reached.");
+      logger("fetchAllFactionMembersToCache stopped because MAX_REQUEST_NUM reached.");
       clearInterval(timerId);
     }
     if (requestCount > memberIds.length - 1) {
-      console.log("fetchAllFactionMembersToCache finished.");
+      logger("fetchAllFactionMembersToCache finished.");
       clearInterval(timerId);
     }
   }, API_REQUEST_DELAY);
@@ -86,11 +88,11 @@ async function fetchAllFactionMembersToCache(factionId) {
 
 function cachePlayer(id, data) {
   if (!id || !data) {
-    console.log("cachePlayer failed due to invalid data. Current cache length: " + playerCache.size);
+    logger("cachePlayer failed due to invalid data. Current cache length: " + playerCache.size);
     return;
   }
   playerCache.set(id, data);
-  console.log("cachePlayer done. Current cache length: " + playerCache.size);
+  logger("cachePlayer done. Current cache length: " + playerCache.size);
 }
 
 function getCacheJson() {
