@@ -7,7 +7,7 @@ import logger from "./logger.js";
 const app = express();
 const port = 3001;
 const SCHEDULE_INTERVAL = 3600000;
-const FACTION_ID_1 = "37595";
+const FACTION_ID_1 = "41620";
 
 let playerCache = new Map();
 
