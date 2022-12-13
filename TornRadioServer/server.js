@@ -19,7 +19,11 @@ setInterval(async () => {
 }, SCHEDULE_INTERVAL);
 
 // CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://www.tornradio.com/",
+  })
+);
 
 // faction API
 app.get("/faction", async (req, res) => {
@@ -75,7 +79,7 @@ async function fetchAllFactionMembersToCache(factionId) {
     }
 
     requestCount++;
-    if (requestCount > MAX_REQUEST_NUM || requestCount > memberIds.length - 1) {
+    if (requestCount > MAX_REQUEST_NUM) {
       logger("fetchAllFactionMembersToCache stopped because MAX_REQUEST_NUM reached.");
       clearInterval(timerId);
     }
