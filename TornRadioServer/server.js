@@ -27,20 +27,20 @@ app.use(
 
 // faction API
 app.get("/faction", async (req, res) => {
-  logger(`faction API access`);
+  logger(`faction API access ${req.ip}`);
   let factionId = req.query.id ? req.query.id : FACTION_ID_1;
   res.send(await fetchFaction(factionId));
 });
 
 // cache API
 app.get("/cache", async (req, res) => {
-  logger(`cache API access`);
+  logger(`cache API access ${req.ip}`);
   res.send(getCacheJson());
 });
 
 // player API
 app.get("/player", async (req, res) => {
-  logger(`player API access`);
+  logger(`player API access ${req.ip}`);
   res.send("hello world");
 });
 
