@@ -21,7 +21,7 @@ setInterval(async () => {
 // CORS
 app.use(
   cors({
-    origin: "http://www.tornradio.com/",
+    origin: "http://www.tornradio.com",
   })
 );
 
