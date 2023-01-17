@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import {} from "dotenv/config";
+import * as dotenv from 'dotenv'
 import express from "express";
 import cors from "cors";
 import logger from "./logger.js";
@@ -7,7 +7,7 @@ import logger from "./logger.js";
 const app = express();
 const port = 3001;
 const SCHEDULE_INTERVAL = 3600000;
-const FACTION_ID_1 = "41620";
+const FACTION_ID_1 = "13737";
 
 let playerCache = new Map();
 
@@ -18,10 +18,12 @@ setInterval(async () => {
   fetchAllFactionMembersToCache(FACTION_ID_1);
 }, SCHEDULE_INTERVAL);
 
+dotenv.config()
+
 // CORS
 app.use(
   cors({
-    origin: "http://www.tornradio.com",
+    origin: ["http://www.tornradio.com", "http://localhost:3000"],
   })
 );
 
