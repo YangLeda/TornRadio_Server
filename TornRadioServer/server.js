@@ -23,7 +23,7 @@ dotenv.config()
 // CORS
 app.use(
   cors({
-    origin: ["*"],
+    origin: "*",
   })
 );
 
