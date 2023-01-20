@@ -23,7 +23,7 @@ dotenv.config()
 // CORS
 app.use(
   cors({
-    origin: ["http://www.tornradio.com", "http://localhost:3000"],
+    origin: ["*"],
   })
 );
 
