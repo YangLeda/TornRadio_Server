@@ -70,16 +70,16 @@ async function fetchSpyDoc() {
   await sheet.loadCells();
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
     let cell = sheet.getCell(i, 0);
-    if (cell.value !== null && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
+    if (cell.value !== null && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
       let id = cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]"));
       console.log(id);
       let obj = new Object();
       obj.id = id;
-      obj.str = sheet.getCell(i, 2).value;
-      obj.def = sheet.getCell(i, 3).value;
-      obj.spd = sheet.getCell(i, 4).value;
-      obj.dex = sheet.getCell(i, 5).value;
-      obj.total = sheet.getCell(i, 6).value;
+      obj.str = isNaN(sheet.getCell(i, 2).value) ? 0 : sheet.getCell(i, 2).value;
+      obj.def = isNaN(sheet.getCell(i, 3).value) ? 0 : sheet.getCell(i, 3).value;
+      obj.spd = isNaN(sheet.getCell(i, 4).value) ? 0 : sheet.getCell(i, 4).value;
+      obj.dex = isNaN(sheet.getCell(i, 5).value) ? 0 : sheet.getCell(i, 5).value;
+      obj.total = isNaN(sheet.getCell(i, 6).value) ? 0 : sheet.getCell(i, 6).value;
       spyData.set(id, JSON.stringify(obj));
     }
   }
