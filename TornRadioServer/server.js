@@ -9,7 +9,7 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 const app = express();
 const port = 3001;
 const FETCH_MEMBER_DETAILS_INTERVAL = 600000;  // 10 minutes
-const FETCH_SPY_DOC_INTERVAL = 300000;  // 5 minutes
+const FETCH_SPY_DOC_INTERVAL = 120000;  // 2 minutes
 
 let playerCache = new Map();
 let spyData = new Map();
