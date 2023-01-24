@@ -1,3 +1,5 @@
+import * as dotenv from 'dotenv'
+dotenv.config()
 import fetch from "node-fetch";
 import express from "express";
 import cors from "cors";
@@ -56,20 +58,18 @@ app.listen(port, () => {
 });
 
 async function fetchDoc() {
-  const doc = new GoogleSpreadsheet(GOOGLE_API_KEY);
+  const doc = new GoogleSpreadsheet(process.env.DOC_ID);
   await doc.useServiceAccountAuth({
-    client_email: EMAIL,
-    private_key: ID,
+    client_email: process.env.EMAIL,
+    private_key: process.env.ID,
   });
-  console.log("111111");
   await doc.loadInfo(); // loads document properties and worksheets
   console.log(doc.title);
-  console.log("22222");
 }
 
 async function fetchFaction(factionId) {
   try {
-    const res = await fetch(`https://api.torn.com/faction/${factionId}?selections=&key=${TORN_API_KEY}`);
+    const res = await fetch(`https://api.torn.com/faction/${factionId}?selections=&key=${process.env.TORN_API_KEY}`);
     const json = await res.json();
     let memberSize = Object.keys(json.members).length;
     memberSize = memberSize ? memberSize : "error";
@@ -90,7 +90,7 @@ async function fetchAllFactionMembersToCache(factionId) {
   let requestCount = 0;
   const timerId = setInterval(async () => {
     try {
-      const res = await fetch(`https://api.torn.com/user/${memberIds[requestCount]}?selections=basic,profile,personalstats,crimes&key=${TORN_API_KEY}`);
+      const res = await fetch(`https://api.torn.com/user/${memberIds[requestCount]}?selections=basic,profile,personalstats,crimes&key=${process.env.TORN_API_KEY}`);
       const json = await res.json();
       cachePlayer(memberIds[requestCount], json);
     } catch (err) {
