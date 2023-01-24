@@ -62,8 +62,13 @@ async function fetchSpyDoc() {
     client_email: process.env.GOOGLE_EMAIL,
     private_key: process.env.GOOGLE_KEY,
   });
-  await doc.loadInfo(); // loads document properties and worksheets
-  console.log(doc.title);
+  await doc.loadInfo();
+  const sheet = doc.sheetsByIndex[0];
+  logger(`fetchSpyDoc ${doc.title} ${sheet.title} ${sheet.rowCount}`);
+  await sheet.loadCells();
+  for (let i = 0; i < sheet.rowCount; i++) {  // each row
+    const cell = sheet.getCell(i, 0);
+    console.log(cell.value);
 }
 
 async function fetchFaction(factionId) {
