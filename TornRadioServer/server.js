@@ -8,24 +8,22 @@ import {GoogleSpreadsheet} from "google-spreadsheet";
 
 const app = express();
 const port = 3001;
-const SCHEDULE_INTERVAL = 600000;  // Fetch member details every 10 minutes
-const FACTION_ID_1 = "13737";
-const TORN_API_KEY = "";
-const GOOGLE_API_KEY = "";
-const DOC_ID = "";
-const EMAIL = "";
-const ID = "";
-
-fetchDoc();
+const FETCH_MEMBER_DETAILS_INTERVAL = 600000;  // 10 minutes
+const FETCH_SPY_DOC_INTERVAL = 300000;  // 5 minutes
 
 let playerCache = new Map();
 
 logger("start");
 
-fetchAllFactionMembersToCache(FACTION_ID_1);
+fetchSpyDoc();
 setInterval(async () => {
-  fetchAllFactionMembersToCache(FACTION_ID_1);
-}, SCHEDULE_INTERVAL);
+  fetchSpyDoc();
+}, FETCH_SPY_DOC_INTERVAL);
+
+fetchAllFactionMembersToCache(process.env.FACTION_ID);
+setInterval(async () => {
+  fetchAllFactionMembersToCache(process.env.FACTION_ID);
+}, FETCH_MEMBER_DETAILS_INTERVAL);
 
 // CORS
 app.use(
@@ -37,7 +35,7 @@ app.use(
 // faction API
 app.get("/faction", async (req, res) => {
   logger(`faction API access ${req.ip}`);
-  let factionId = req.query.id ? req.query.id : FACTION_ID_1;
+  let factionId = req.query.id ? req.query.id : process.env.FACTION_ID;
   res.send(await fetchFaction(factionId));
 });
 
@@ -57,11 +55,12 @@ app.listen(port, () => {
   logger(`TornRadio server start listening on port ${port}`);
 });
 
-async function fetchDoc() {
-  const doc = new GoogleSpreadsheet(process.env.DOC_ID);
+async function fetchSpyDoc() {
+  logger("fetchSpyDoc start");
+  const doc = new GoogleSpreadsheet(process.env.SPY_DOC_ID);
   await doc.useServiceAccountAuth({
-    client_email: process.env.EMAIL,
-    private_key: process.env.ID,
+    client_email: process.env.GOOGLE_EMAIL,
+    private_key: process.env.GOOGLE_KEY,
   });
   await doc.loadInfo(); // loads document properties and worksheets
   console.log(doc.title);
