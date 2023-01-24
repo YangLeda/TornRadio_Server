@@ -1,13 +1,13 @@
 import fetch from "node-fetch";
-import * as dotenv from 'dotenv'
 import express from "express";
 import cors from "cors";
 import logger from "./logger.js";
 
 const app = express();
 const port = 3001;
-const SCHEDULE_INTERVAL = 3600000;
+const SCHEDULE_INTERVAL = 600000;  // Fetch member details every 10 minutes
 const FACTION_ID_1 = "13737";
+const TORN_API_KEY = "";
 
 let playerCache = new Map();
 
@@ -17,8 +17,6 @@ fetchAllFactionMembersToCache(FACTION_ID_1);
 setInterval(async () => {
   fetchAllFactionMembersToCache(FACTION_ID_1);
 }, SCHEDULE_INTERVAL);
-
-dotenv.config()
 
 // CORS
 app.use(
@@ -52,7 +50,7 @@ app.listen(port, () => {
 
 async function fetchFaction(factionId) {
   try {
-    const res = await fetch(`https://api.torn.com/faction/${factionId}?selections=&key=${process.env.TORN_API_KEY}`);
+    const res = await fetch(`https://api.torn.com/faction/${factionId}?selections=&key=${TORN_API_KEY}`);
     const json = await res.json();
     let memberSize = Object.keys(json.members).length;
     memberSize = memberSize ? memberSize : "error";
@@ -69,11 +67,11 @@ async function fetchAllFactionMembersToCache(factionId) {
   const memberIds = Object.keys(factionJson.members);
 
   const MAX_REQUEST_NUM = 100;
-  const API_REQUEST_DELAY = 1000;
+  const API_REQUEST_DELAY = 3000;
   let requestCount = 0;
   const timerId = setInterval(async () => {
     try {
-      const res = await fetch(`https://api.torn.com/user/${memberIds[requestCount]}?selections=basic,profile,personalstats,crimes&key=${process.env.TORN_API_KEY}`);
+      const res = await fetch(`https://api.torn.com/user/${memberIds[requestCount]}?selections=basic,profile,personalstats,crimes&key=${TORN_API_KEY}`);
       const json = await res.json();
       cachePlayer(memberIds[requestCount], json);
     } catch (err) {
@@ -95,6 +93,10 @@ async function fetchAllFactionMembersToCache(factionId) {
 function cachePlayer(id, data) {
   if (!id || !data) {
     logger("cachePlayer failed due to invalid data. Current cache length: " + playerCache.size);
+    return;
+  }
+  if (data["level"] == undefined) {
+    logger("cachePlayer error: " + id);
     return;
   }
   playerCache.set(id, data);
