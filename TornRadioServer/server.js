@@ -12,17 +12,14 @@ const TORN_API_KEY = "";
 const GOOGLE_API_KEY = "";
 const DOC_ID = "";
 
+fetchDoc();
+
 // CORS
 app.use(
   cors({
     origin: "*",
   })
 );
-
-const doc = new GoogleSpreadsheet(GOOGLE_API_KEY);
-doc.useApiKey(DOC_ID);
-await doc.loadInfo(); // loads document properties and worksheets
-console.log(doc.title);
 
 // faction API
 app.get("/faction", async (req, res) => {
@@ -46,6 +43,13 @@ app.get("/player", async (req, res) => {
 app.listen(port, () => {
   logger(`TornRadio server start listening on port ${port}`);
 });
+
+async function fetchDoc() {
+  const doc = new GoogleSpreadsheet(GOOGLE_API_KEY);
+  doc.useApiKey(DOC_ID);
+  await doc.loadInfo(); // loads document properties and worksheets
+  console.log(doc.title);
+}
 
 async function fetchFaction(factionId) {
   try {
