@@ -2,12 +2,25 @@ import fetch from "node-fetch";
 import express from "express";
 import cors from "cors";
 import logger from "./logger.js";
+import GSheetReader from "g-sheets-api";
 
 const app = express();
 const port = 3001;
 const SCHEDULE_INTERVAL = 600000;  // Fetch member details every 10 minutes
 const FACTION_ID_1 = "13737";
 const TORN_API_KEY = "";
+
+const options = {
+  apiKey: "",
+  sheetId: "",
+  sheetNumber: 1,
+  returnAllResults: false,
+}
+GSheetReader(options, results => {
+  logger("GSheetReader " + JSON.stringify(results));
+}).catch(err => {
+  logger("GSheetReader error: " + err);
+});
 
 let playerCache = new Map();
 
