@@ -80,7 +80,7 @@ async function fetchSpyDoc() {
       obj.spd = isNaN(sheet.getCell(i, 4).value) ? 0 : sheet.getCell(i, 4).value;
       obj.dex = isNaN(sheet.getCell(i, 5).value) ? 0 : sheet.getCell(i, 5).value;
       obj.total = isNaN(sheet.getCell(i, 6).value) ? 0 : sheet.getCell(i, 6).value;
-      spyData.set(id, JSON.stringify(obj));
+      spyData.set(id, obj);
     }
   }
 }
