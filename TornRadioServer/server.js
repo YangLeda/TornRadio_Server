@@ -11,8 +11,19 @@ const FACTION_ID_1 = "13737";
 const TORN_API_KEY = "";
 const GOOGLE_API_KEY = "";
 const DOC_ID = "";
+const EMAIL = "";
+const ID = "";
 
 fetchDoc();
+
+let playerCache = new Map();
+
+logger("start");
+
+fetchAllFactionMembersToCache(FACTION_ID_1);
+setInterval(async () => {
+  fetchAllFactionMembersToCache(FACTION_ID_1);
+}, SCHEDULE_INTERVAL);
 
 // CORS
 app.use(
@@ -46,9 +57,14 @@ app.listen(port, () => {
 
 async function fetchDoc() {
   const doc = new GoogleSpreadsheet(GOOGLE_API_KEY);
-  doc.useApiKey(DOC_ID);
+  await doc.useServiceAccountAuth({
+    client_email: EMAIL,
+    private_key: ID,
+  });
+  console.log("111111");
   await doc.loadInfo(); // loads document properties and worksheets
   console.log(doc.title);
+  console.log("22222");
 }
 
 async function fetchFaction(factionId) {
