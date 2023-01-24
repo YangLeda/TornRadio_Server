@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv'
-dotenv.config()
+dotenv.config({ path: "/root/TornRadio_Server/.env" })
 import fetch from "node-fetch";
 import express from "express";
 import cors from "cors";
@@ -70,7 +70,7 @@ async function fetchSpyDoc() {
   await sheet.loadCells();
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
     let cell = sheet.getCell(i, 0);
-    if (typeof(cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
+    if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
       let id = cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]"));
       let obj = new Object();
       obj.id = id;
