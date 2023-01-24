@@ -72,7 +72,6 @@ async function fetchSpyDoc() {
     let cell = sheet.getCell(i, 0);
     if (typeof(cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
       let id = cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]"));
-      console.log(id);
       let obj = new Object();
       obj.id = id;
       obj.str = sheet.getCell(i, 2).value == null || isNaN(sheet.getCell(i, 2).value) ? 0 : sheet.getCell(i, 2).value;
@@ -83,7 +82,7 @@ async function fetchSpyDoc() {
       spyData.set(id, obj);
     }
   }
-  logger(`fetchSpyDoc end. spyData size = ${spyData.size}`);
+  logger(`fetchSpyDoc done with spyData size = ${spyData.size}`);
 }
 
 async function fetchFaction(factionId) {
