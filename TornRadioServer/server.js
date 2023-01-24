@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv'
-dotenv.config({ path: "/root/TornRadio_Server/.env" })
+dotenv.config();
 import fetch from "node-fetch";
 import express from "express";
 import cors from "cors";
