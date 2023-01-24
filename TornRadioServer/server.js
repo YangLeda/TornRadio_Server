@@ -12,6 +12,7 @@ const FETCH_MEMBER_DETAILS_INTERVAL = 600000;  // 10 minutes
 const FETCH_SPY_DOC_INTERVAL = 300000;  // 5 minutes
 
 let playerCache = new Map();
+let spyData = new Map();
 
 logger("start");
 
@@ -45,10 +46,10 @@ app.get("/cache", async (req, res) => {
   res.send(getCacheJson());
 });
 
-// player API
-app.get("/player", async (req, res) => {
-  logger(`player API access ${req.ip}`);
-  res.send("hello world");
+// spy API
+app.get("/spy", async (req, res) => {
+  logger(`spy API access ${req.ip}`);
+  res.send(getSpyJson());
 });
 
 app.listen(port, () => {
@@ -57,6 +58,7 @@ app.listen(port, () => {
 
 async function fetchSpyDoc() {
   logger("fetchSpyDoc start");
+  const MAX_ROW_COUNT = 200;
   const doc = new GoogleSpreadsheet(process.env.SPY_DOC_ID);
   await doc.useServiceAccountAuth({
     client_email: process.env.GOOGLE_EMAIL,
@@ -66,9 +68,20 @@ async function fetchSpyDoc() {
   const sheet = doc.sheetsByIndex[0];
   logger(`fetchSpyDoc ${doc.title} ${sheet.title} ${sheet.rowCount}`);
   await sheet.loadCells();
-  for (let i = 0; i < sheet.rowCount; i++) {  // each row
-    const cell = sheet.getCell(i, 0);
-    console.log(cell.value);
+  for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
+    let cell = sheet.getCell(i, 0);
+    if (cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0) {
+      let id = cell.value.substring(cell.value.indexOf("["), cell.value.indexOf("]") + 1);
+      console.log(id);
+      let obj = new Object();
+      obj.id = id;
+      obj.str = sheet.getCell(i, 2).value;
+      obj.def = sheet.getCell(i, 3).value;
+      obj.spd = sheet.getCell(i, 4).value;
+      obj.dex = sheet.getCell(i, 5).value;
+      obj.total = sheet.getCell(i, 6).value;
+      spyData.set(id, JSON.stringify(obj));
+    }
   }
 }
 
@@ -130,6 +143,14 @@ function cachePlayer(id, data) {
 function getCacheJson() {
   let obj = {};
   playerCache.forEach((value, key) => {
+    obj[key] = value;
+  });
+  return JSON.stringify(obj);
+}
+
+function getSpyJson() {
+  let obj = {};
+  spyData.forEach((value, key) => {
     obj[key] = value;
   });
   return JSON.stringify(obj);
