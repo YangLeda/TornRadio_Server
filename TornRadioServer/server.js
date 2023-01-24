@@ -70,7 +70,7 @@ async function fetchSpyDoc() {
   await sheet.loadCells();
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
     let cell = sheet.getCell(i, 0);
-    if (cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0) {
+    if (cell.value !== null && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0) {
       let id = cell.value.substring(cell.value.indexOf("["), cell.value.indexOf("]") + 1);
       console.log(id);
       let obj = new Object();
