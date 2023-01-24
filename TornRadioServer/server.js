@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 import express from "express";
 import cors from "cors";
 import logger from "./logger.js";
-import {GoogleSpreadsheet} from "google-spreadsheet";
+import { GoogleSpreadsheet } from "google-spreadsheet";
 
 const app = express();
 const port = 3001;
@@ -69,6 +69,7 @@ async function fetchSpyDoc() {
   for (let i = 0; i < sheet.rowCount; i++) {  // each row
     const cell = sheet.getCell(i, 0);
     console.log(cell.value);
+  }
 }
 
 async function fetchFaction(factionId) {
