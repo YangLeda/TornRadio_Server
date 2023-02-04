@@ -8,7 +8,7 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 
 const app = express();
 const port = 3001;
-const FETCH_MEMBER_DETAILS_INTERVAL = 1800000;  // 30 minutes
+const FETCH_MEMBER_DETAILS_INTERVAL = 300000;  // 5 minutes
 const FETCH_SPY_DOC_INTERVAL = 300000;  // 5 minutes
 
 let playerCache = new Map();
@@ -104,7 +104,7 @@ async function fetchAllFactionMembersToCache(factionId) {
   const memberIds = Object.keys(factionJson.members);
 
   const MAX_REQUEST_NUM = 100;
-  const API_REQUEST_DELAY = 3000;
+  const API_REQUEST_DELAY = 1000;
   let requestCount = 0;
   const timerId = setInterval(async () => {
     try {
