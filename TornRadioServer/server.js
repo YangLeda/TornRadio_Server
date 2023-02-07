@@ -104,7 +104,7 @@ async function fetchAllFactionMembersToCache(factionId) {
   const memberIds = Object.keys(factionJson.members);
 
   const MAX_REQUEST_NUM = 150;
-  const API_REQUEST_DELAY = 1000;
+  const API_REQUEST_DELAY = 1500;
   let requestCount = 0;
   const timerId = setInterval(async () => {
     try {
@@ -132,8 +132,12 @@ function cachePlayer(id, data) {
     logger("cachePlayer failed due to invalid data. Current cache length: " + playerCache.size);
     return;
   }
-  if (data["level"] == undefined) {
-    logger("cachePlayer error: " + id);
+  if (data["player_id"] == undefined) {
+    logger("cachePlayer error: possible API server error" + id);
+    return;
+  }
+  if (data["player_id"] != id) {
+    logger("cachePlayer error: missmatched id, possible API server error" + id);
     return;
   }
   playerCache.set(id, data);
