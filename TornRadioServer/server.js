@@ -69,7 +69,7 @@ async function fetchSpyDoc() {
   logger(`fetchSpyDoc ${doc.title} ${sheet.title} ${sheet.rowCount}`);
   await sheet.loadCells();
 
-  // Read multi-line raw string at "J1". Fill column "I". Log failure at "K1".
+  // Clear colomn "I".
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
     let cell = sheet.getCell(i, 0);
     if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
@@ -79,6 +79,7 @@ async function fetchSpyDoc() {
   await sheet.saveUpdatedCells();
   await sheet.loadCells();
 
+  // Read multi-line raw string at "J1". Fill column "I". Log failure at "K1".
   const rawStr = sheet.getCellByA1("J1").value;
   logger("Raw str lines: " + rawStr.split("\n").length);
   let failedListStr = "Failed raw strings: \n";
@@ -86,7 +87,6 @@ async function fetchSpyDoc() {
     let isFound = -1;
     let words = line.split(" ");
     for (let i = 0; i < words.length && isFound < 0; i++) {  // each word in raw string line
-
       for (let j = 0; j < MAX_ROW_COUNT; j++) {  // each row
         let cell = sheet.getCell(j, 0);
         if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
@@ -97,27 +97,35 @@ async function fetchSpyDoc() {
           }
         }
       }
-
     }
-    if (isFound >= 0) {
-      // logger("line: " + line);
-      // logger(typeof line);
-      // const searchRegExp = /,/g;
-      // let line2 = line.replace(searchRegExp, "");
-      // let matches = line2.match("/\d+/g");
-      // if (matches.length >= 4 && matches.length <= 5) {
-      //   for (let i = 0; i < matches.length; i++) {
-      //     sheet.getCell(isFound, i + 2).value = matches[i];
-      //     sheet.getCell(isFound, i + 2).textFormat = { bold: true };
-      //   }
-      // } else {
-      //   logger("too little or too many numbers muched for line: " + line);
-      // }
-    } else {
+    if (isFound < 0) {
       failedListStr += line + "\n";
     }
   });
   sheet.getCellByA1("K1").value = failedListStr;
+  await sheet.saveUpdatedCells();
+  await sheet.loadCells();
+
+  // Parse numbers and fill cells
+  for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
+    let cellId = sheet.getCell(i, 0);
+    let cellParsedLine = sheet.getCell(i, 8);
+    if (typeof (cellParsedLine.value) == "string" && cellParsedLine.value != "" && typeof (cellId.value) === "string" && cellId.value.indexOf("[") > 0 && cellId.value.indexOf("]") > 0 && !isNaN(cellId.value.substring(cellId.value.indexOf("[") + 1, cellId.value.indexOf("]")))) {
+      // logger("line: " + line);
+      // logger(typeof line);
+      // const searchRegExp = /,/g;
+      let line = cellParsedLine.value.replaceAll(",", "");
+      let matches = line.match("/\d+/g");
+      if (matches.length >= 4 && matches.length <= 5) {
+        for (let j = 0; j < matches.length; j++) {
+          sheet.getCell(isFound, j + 2).value = matches[i];
+          sheet.getCell(isFound, j + 2).textFormat = { bold: true };
+        }
+      } else {
+        logger("too little or too many numbers muched for line: " + line);
+      }
+    }
+  }
   await sheet.saveUpdatedCells();
   await sheet.loadCells();
 
