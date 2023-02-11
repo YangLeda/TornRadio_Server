@@ -68,6 +68,29 @@ async function fetchSpyDoc() {
   const sheet = doc.sheetsByIndex[0];
   logger(`fetchSpyDoc ${doc.title} ${sheet.title} ${sheet.rowCount}`);
   await sheet.loadCells();
+
+  // Fill cells with raw string at K1
+  const rawStr = sheet.getCellByA1("K1").value;
+  logger("Raw: " + rawStr);
+  rawStr.split("\n").forEach((line) => {
+    let words = str.split(" ");
+    for (let i = 0; i < words.length; i++) {  // each word in raw string line
+      for (let j = 0; j < MAX_ROW_COUNT; j++) {  // each row
+        let cell = sheet.getCell(j, 0);
+        if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
+          if (cell.value.includes(words[i])) {
+            sheet.getCell(j, 8).value = line;
+          }
+        }
+      }
+    }
+  });
+
+  a1.value = 123.456;
+  a1.textFormat = { bold: true };
+  await sheet.saveUpdatedCells();
+
+
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
     let cell = sheet.getCell(i, 0);
     if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
