@@ -69,9 +69,18 @@ async function fetchSpyDoc() {
   logger(`fetchSpyDoc ${doc.title} ${sheet.title} ${sheet.rowCount}`);
   await sheet.loadCells();
 
-  // Fill cells with raw string at K1
-  const rawStr = sheet.getCellByA1("K1").value;
-  logger("Raw: " + rawStr);
+  // Read multi-line raw string at "J1". Fill column "I". Log failure at "K1".
+  for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
+    let cell = sheet.getCell(i, 0);
+    if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
+      sheet.getCell(i, 7).value = "";
+    }
+  }
+  await sheet.saveUpdatedCells();
+
+  const rawStr = sheet.getCellByA1("J1").value;
+  logger("Raw str lines: " + rawStr.split("\n").length);
+  sheet.getCell("K1").value = "Failed raw strings: \n";
   rawStr.split("\n").forEach((line) => {
     let isFound = false;
     let words = line.split(" ");
@@ -88,11 +97,14 @@ async function fetchSpyDoc() {
       }
     }
     if (!isFound) {
-      sheet.getCell("L1").value = sheet.getCell("L1").value + line + "\n";
+      sheet.getCell("K1").value = sheet.getCell("K1").value + line + "\n";
     }
   });
   await sheet.saveUpdatedCells();
 
+
+
+  // Read data
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
     let cell = sheet.getCell(i, 0);
     if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
@@ -101,8 +113,8 @@ async function fetchSpyDoc() {
       obj.id = id;
       obj.str = sheet.getCell(i, 2).value == null || isNaN(sheet.getCell(i, 2).value) ? 0 : sheet.getCell(i, 2).value;
       obj.spd = sheet.getCell(i, 3).value == null || isNaN(sheet.getCell(i, 3).value) ? 0 : sheet.getCell(i, 3).value;
-      obj.def = sheet.getCell(i, 4).value == null || isNaN(sheet.getCell(i, 4).value) ? 0 : sheet.getCell(i, 4).value;
-      obj.dex = sheet.getCell(i, 5).value == null || isNaN(sheet.getCell(i, 5).value) ? 0 : sheet.getCell(i, 5).value;
+      obj.dex = sheet.getCell(i, 4).value == null || isNaN(sheet.getCell(i, 4).value) ? 0 : sheet.getCell(i, 4).value;
+      obj.def = sheet.getCell(i, 5).value == null || isNaN(sheet.getCell(i, 5).value) ? 0 : sheet.getCell(i, 5).value;
       obj.total = sheet.getCell(i, 6).value == null || isNaN(sheet.getCell(i, 6).value) ? 0 : sheet.getCell(i, 6).value;
       spyData.set(id, obj);
     }
