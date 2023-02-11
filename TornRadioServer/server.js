@@ -84,16 +84,19 @@ async function fetchSpyDoc() {
   rawStr.split("\n").forEach((line) => {
     let isFound = -1;
     let words = line.split(" ");
-    for (let i = 0; i < words.length; i++) {  // each word in raw string line
+    for (let i = 0; i < words.length && isFound < 0; i++) {  // each word in raw string line
+
       for (let j = 0; j < MAX_ROW_COUNT; j++) {  // each row
         let cell = sheet.getCell(j, 0);
         if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
           if (cell.value.includes(words[i])) {
+            logger("Found name: " + words[i]);
             sheet.getCell(j, 8).value = line;
             isFound = j;
           }
         }
       }
+
     }
     if (isFound >= 0) {
       // logger("line: " + line);
