@@ -77,6 +77,7 @@ async function fetchSpyDoc() {
     }
   }
   await sheet.saveUpdatedCells();
+  await sheet.loadCells();
 
   const rawStr = sheet.getCellByA1("J1").value;
   logger("Raw str lines: " + rawStr.split("\n").length);
@@ -118,6 +119,7 @@ async function fetchSpyDoc() {
   });
   sheet.getCellByA1("K1").value = failedListStr;
   await sheet.saveUpdatedCells();
+  await sheet.loadCells();
 
   // Read data
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
