@@ -98,8 +98,9 @@ async function fetchSpyDoc() {
     if (isFound >= 0) {
       logger("line: " + line);
       logger(typeof line);
-      let line2 = line.replaceAll(",", "");
-      let matches = line2.replaceAll(",", "").match("/\d+/g");
+      const searchRegExp = /,/g;
+      let line2 = line.replaceAll(searchRegExp, "");
+      let matches = line2.match("/\d+/g");
       if (matches.length >= 4 && matches.length <= 5) {
         for (let i = 0; i < matches.length; i++) {
           sheet.getCell(isFound, i + 2).value = matches[i];
