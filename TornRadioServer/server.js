@@ -73,7 +73,7 @@ async function fetchSpyDoc() {
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
     let cell = sheet.getCell(i, 0);
     if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
-      sheet.getCell(i, 7).value = "";
+      sheet.getCell(i, 8).value = "";
     }
   }
   await sheet.saveUpdatedCells();
