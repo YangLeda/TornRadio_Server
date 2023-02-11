@@ -77,6 +77,7 @@ async function fetchSpyDoc() {
     }
   }
   await sheet.saveUpdatedCells();
+  await sheet.loadCells();
 
   const rawStr = sheet.getCellByA1("J1").value;
   logger("Raw str lines: " + rawStr.split("\n").length);
@@ -101,6 +102,7 @@ async function fetchSpyDoc() {
     }
   });
   await sheet.saveUpdatedCells();
+  await sheet.loadCells();
 
 
 
