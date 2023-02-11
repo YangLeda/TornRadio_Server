@@ -90,7 +90,7 @@ async function fetchSpyDoc() {
       for (let j = 0; j < MAX_ROW_COUNT; j++) {  // each row
         let cell = sheet.getCell(j, 0);
         if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
-          if (cell.value.includes(words[i])) {
+          if (cell.value.substring(0, cell.value.indexOf("[")) == words[i]) {
             logger("Found name: " + words[i]);
             sheet.getCell(j, 8).value = line;
             isFound = j;
