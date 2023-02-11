@@ -91,7 +91,6 @@ async function fetchSpyDoc() {
         let cell = sheet.getCell(j, 0);
         if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
           if (cell.value.substring(0, cell.value.indexOf("[")) == words[i]) {
-            logger("Found name: " + words[i]);
             sheet.getCell(j, 8).value = line;
             isFound = j;
           }
@@ -111,10 +110,8 @@ async function fetchSpyDoc() {
     let cellId = sheet.getCell(i, 0);
     let cellParsedLine = sheet.getCell(i, 8);
     if (typeof (cellParsedLine.value) == "string" && cellParsedLine.value != "" && typeof (cellId.value) === "string" && cellId.value.indexOf("[") > 0 && cellId.value.indexOf("]") > 0 && !isNaN(cellId.value.substring(cellId.value.indexOf("[") + 1, cellId.value.indexOf("]")))) {
-      // logger("line: " + line);
-      // logger(typeof line);
-      // const searchRegExp = /,/g;
       let line = cellParsedLine.value.replace(/,/g, "");
+      logger("Parse line: " + line);
       let matches = line.match("/\d+/g");
       if (matches.length >= 4 && matches.length <= 5) {
         for (let j = 0; j < matches.length; j++) {
