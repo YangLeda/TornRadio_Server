@@ -115,7 +115,7 @@ async function fetchSpyDoc() {
       let matches = line.match(/ \d+ /g);
       if (matches.length >= 4 && matches.length <= 5) {
         for (let j = 0; j < matches.length; j++) {
-          sheet.getCell(i, j + 2).value = matches[j];
+          sheet.getCell(i, j + 2).value = parseInt(matches[j]);
           sheet.getCell(i, j + 2).textFormat = { bold: true };
         }
         cellParsedLine.value = "Added: " + cellParsedLine.value;
