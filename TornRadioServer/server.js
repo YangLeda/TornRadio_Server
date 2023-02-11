@@ -96,19 +96,19 @@ async function fetchSpyDoc() {
       }
     }
     if (isFound >= 0) {
-      logger("line: " + line);
-      logger(typeof line);
-      const searchRegExp = /,/g;
-      let line2 = line.replace(searchRegExp, "");
-      let matches = line2.match("/\d+/g");
-      if (matches.length >= 4 && matches.length <= 5) {
-        for (let i = 0; i < matches.length; i++) {
-          sheet.getCell(isFound, i + 2).value = matches[i];
-          sheet.getCell(isFound, i + 2).textFormat = { bold: true };
-        }
-      } else {
-        logger("too little or too many numbers muched for line: " + line);
-      }
+      // logger("line: " + line);
+      // logger(typeof line);
+      // const searchRegExp = /,/g;
+      // let line2 = line.replace(searchRegExp, "");
+      // let matches = line2.match("/\d+/g");
+      // if (matches.length >= 4 && matches.length <= 5) {
+      //   for (let i = 0; i < matches.length; i++) {
+      //     sheet.getCell(isFound, i + 2).value = matches[i];
+      //     sheet.getCell(isFound, i + 2).textFormat = { bold: true };
+      //   }
+      // } else {
+      //   logger("too little or too many numbers muched for line: " + line);
+      // }
     } else {
       failedListStr += line + "\n";
     }
