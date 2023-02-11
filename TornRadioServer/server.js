@@ -77,11 +77,10 @@ async function fetchSpyDoc() {
     }
   }
   await sheet.saveUpdatedCells();
-  await sheet.loadCells();
 
   const rawStr = sheet.getCellByA1("J1").value;
   logger("Raw str lines: " + rawStr.split("\n").length);
-  sheet.getCell("K1").value = "Failed raw strings: \n";
+  sheet.getCellByA1("K1").value = "Failed raw strings: \n";
   rawStr.split("\n").forEach((line) => {
     let isFound = false;
     let words = line.split(" ");
@@ -98,11 +97,10 @@ async function fetchSpyDoc() {
       }
     }
     if (!isFound) {
-      sheet.getCell("K1").value = sheet.getCell("K1").value + line + "\n";
+      sheet.getCellByA1("K1").value = sheet.getCell("K1").value + line + "\n";
     }
   });
   await sheet.saveUpdatedCells();
-  await sheet.loadCells();
 
 
 
