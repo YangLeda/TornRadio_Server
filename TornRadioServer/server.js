@@ -99,7 +99,7 @@ async function fetchSpyDoc() {
       logger("line: " + line);
       logger(typeof line);
       const searchRegExp = /,/g;
-      let line2 = line.replaceAll(searchRegExp, "");
+      let line2 = line.replace(searchRegExp, "");
       let matches = line2.match("/\d+/g");
       if (matches.length >= 4 && matches.length <= 5) {
         for (let i = 0; i < matches.length; i++) {
