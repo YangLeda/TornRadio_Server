@@ -85,11 +85,7 @@ async function fetchSpyDoc() {
       }
     }
   });
-
-  a1.value = 123.456;
-  a1.textFormat = { bold: true };
   await sheet.saveUpdatedCells();
-
 
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
     let cell = sheet.getCell(i, 0);
