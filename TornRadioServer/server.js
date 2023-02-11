@@ -118,7 +118,7 @@ async function fetchSpyDoc() {
           sheet.getCell(i, j + 2).value = matches[j];
           sheet.getCell(i, j + 2).textFormat = { bold: true };
         }
-        cellParsedLine.value = "Added";
+        cellParsedLine.value = "Added: " + cellParsedLine.value;
       } else {
         logger("too little or too many numbers muched for line: " + line);
       }
