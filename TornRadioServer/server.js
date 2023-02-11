@@ -115,10 +115,10 @@ async function fetchSpyDoc() {
       let matches = line.match(/\d+/g);
       if (matches.length >= 4 && matches.length <= 5) {
         for (let j = 0; j < matches.length; j++) {
-          sheet.getCell(i, j + 2).value = matches[i];
+          sheet.getCell(i, j + 2).value = matches[j];
           sheet.getCell(i, j + 2).textFormat = { bold: true };
         }
-        cellParsedLine.value = "";
+        cellParsedLine.value = "Added";
       } else {
         logger("too little or too many numbers muched for line: " + line);
       }
