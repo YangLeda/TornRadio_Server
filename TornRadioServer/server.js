@@ -82,7 +82,7 @@ async function fetchSpyDoc() {
   logger("Raw str lines: " + rawStr.split("\n").length);
   let failedListStr = "Failed raw strings: \n";
   rawStr.split("\n").forEach((line) => {
-    let isFound = false;
+    let isFound = -1;
     let words = line.split(" ");
     for (let i = 0; i < words.length; i++) {  // each word in raw string line
       for (let j = 0; j < MAX_ROW_COUNT; j++) {  // each row
@@ -90,20 +90,27 @@ async function fetchSpyDoc() {
         if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
           if (cell.value.includes(words[i])) {
             sheet.getCell(j, 8).value = line;
-            isFound = true;
-            continue;
+            isFound = j;
           }
         }
       }
     }
-    if (!isFound) {
+    if (isFound >= 0) {
+      var matches = line.match("/\d+/g");
+      if (matches.length >= 4 && matches.length <= 5) {
+        for (let i = 0; i < matches.length; i++) {
+          sheet.getCell(isFound, i + 2).value = matches[i];
+          sheet.getCell(isFound, i + 2).textFormat = { bold: true };
+        }
+      } else {
+        logger("too little or too many numbers muched for line: " + line);
+      }
+    } else {
       failedListStr += line + "\n";
     }
   });
   sheet.getCellByA1("K1").value = failedListStr;
   await sheet.saveUpdatedCells();
-
-
 
   // Read data
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
