@@ -80,7 +80,7 @@ async function fetchSpyDoc() {
 
   const rawStr = sheet.getCellByA1("J1").value;
   logger("Raw str lines: " + rawStr.split("\n").length);
-  sheet.getCellByA1("K1").value = "Failed raw strings: \n";
+  let failedListStr = "Failed raw strings: \n";
   rawStr.split("\n").forEach((line) => {
     let isFound = false;
     let words = line.split(" ");
@@ -97,9 +97,10 @@ async function fetchSpyDoc() {
       }
     }
     if (!isFound) {
-      sheet.getCellByA1("K1").value = sheet.getCellByA1("K1").value + line + "\n";
+      failedListStr += line + "\n";
     }
   });
+  sheet.getCellByA1("K1").value = failedListStr;
   await sheet.saveUpdatedCells();
 
 
