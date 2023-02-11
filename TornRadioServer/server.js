@@ -73,6 +73,7 @@ async function fetchSpyDoc() {
   const rawStr = sheet.getCellByA1("K1").value;
   logger("Raw: " + rawStr);
   rawStr.split("\n").forEach((line) => {
+    let isFound = false;
     let words = line.split(" ");
     for (let i = 0; i < words.length; i++) {  // each word in raw string line
       for (let j = 0; j < MAX_ROW_COUNT; j++) {  // each row
@@ -80,9 +81,14 @@ async function fetchSpyDoc() {
         if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
           if (cell.value.includes(words[i])) {
             sheet.getCell(j, 8).value = line;
+            isFound = true;
+            continue;
           }
         }
       }
+    }
+    if (!isFound) {
+      sheet.getCell("L1").value = sheet.getCell("L1").value + line + "\n";
     }
   });
   await sheet.saveUpdatedCells();
