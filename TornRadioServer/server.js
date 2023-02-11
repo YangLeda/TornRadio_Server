@@ -112,12 +112,13 @@ async function fetchSpyDoc() {
     if (typeof (cellParsedLine.value) == "string" && cellParsedLine.value != "" && typeof (cellId.value) === "string" && cellId.value.indexOf("[") > 0 && cellId.value.indexOf("]") > 0 && !isNaN(cellId.value.substring(cellId.value.indexOf("[") + 1, cellId.value.indexOf("]")))) {
       let line = cellParsedLine.value.replace(/,/g, "");
       logger("Parse line: " + line);
-      let matches = line.match("/\d+/g");
+      let matches = line.match(/\d+/g);
       if (matches.length >= 4 && matches.length <= 5) {
         for (let j = 0; j < matches.length; j++) {
           sheet.getCell(isFound, j + 2).value = matches[i];
           sheet.getCell(isFound, j + 2).textFormat = { bold: true };
         }
+        cellParsedLine.value = "";
       } else {
         logger("too little or too many numbers muched for line: " + line);
       }
