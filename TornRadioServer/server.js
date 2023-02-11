@@ -96,6 +96,7 @@ async function fetchSpyDoc() {
       }
     }
     if (isFound >= 0) {
+      logger("line: " + line);
       let matches = line.replaceAll(",", "").match("/\d+/g");
       if (matches.length >= 4 && matches.length <= 5) {
         for (let i = 0; i < matches.length; i++) {
