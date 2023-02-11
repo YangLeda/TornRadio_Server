@@ -97,7 +97,7 @@ async function fetchSpyDoc() {
       }
     }
     if (!isFound) {
-      sheet.getCellByA1("K1").value = sheet.getCell("K1").value + line + "\n";
+      sheet.getCellByA1("K1").value = sheet.getCellByA1("K1").value + line + "\n";
     }
   });
   await sheet.saveUpdatedCells();
