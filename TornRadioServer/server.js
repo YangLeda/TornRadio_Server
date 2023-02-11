@@ -73,7 +73,7 @@ async function fetchSpyDoc() {
   const rawStr = sheet.getCellByA1("K1").value;
   logger("Raw: " + rawStr);
   rawStr.split("\n").forEach((line) => {
-    let words = str.split(" ");
+    let words = line.split(" ");
     for (let i = 0; i < words.length; i++) {  // each word in raw string line
       for (let j = 0; j < MAX_ROW_COUNT; j++) {  // each row
         let cell = sheet.getCell(j, 0);
