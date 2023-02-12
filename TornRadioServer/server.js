@@ -9,8 +9,8 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 const app = express();
 const port = 3001;
 const MY_FACTION_ID = 41066;
-const FETCH_MEMBER_DETAILS_INTERVAL = 300000;  // 5 minutes
-const FETCH_SPY_DOC_INTERVAL = 300000;  // 5 minutes
+const FETCH_MEMBER_DETAILS_INTERVAL = 180000;  // 3 minutes
+const FETCH_SPY_DOC_INTERVAL = 180000;  // 3 minutes
 
 let enemyFactionId = -1;
 let playerCache = new Map();
