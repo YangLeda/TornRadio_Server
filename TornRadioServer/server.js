@@ -161,7 +161,7 @@ async function fetchFaction(factionId) {
 async function fetchAllFactionMembersToCache() {
   logger("fetchAllFactionMembersToCache() start");
   let temp = await fetchEnemyFactionId();
-  if (enemyFactionId != -1 && enemyFactionId != temp) {
+  if (temp != -1 && enemyFactionId != temp) {
     enemyFactionId = temp;
     playerCache.clear();
     logger("fetchAllFactionMembersToCache() enemy faction ID changed, clear playerCache map");
