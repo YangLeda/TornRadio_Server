@@ -168,8 +168,8 @@ async function fetchAllFactionMembersToCache() {
   const factionJson = await fetchFaction(enemyFactionId);
   const memberIds = Object.keys(factionJson.members);
 
-  const MAX_REQUEST_NUM = 150;
-  const API_REQUEST_DELAY = 2000;
+  const MAX_REQUEST_NUM = 110;
+  const API_REQUEST_DELAY = 1000;
   let requestCount = 0;
   const timerId = setInterval(async () => {
     if (!playerCache.has(memberIds[requestCount])) {
