@@ -9,7 +9,7 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 const app = express();
 const port = 3001;
 const MY_FACTION_ID = 41066;
-const FETCH_MEMBER_DETAILS_INTERVAL = 180000;  // 3 minutes
+const FETCH_MEMBER_DETAILS_INTERVAL = 300000;  // 5 minutes
 const FETCH_SPY_DOC_INTERVAL = 180000;  // 3 minutes
 
 let enemyFactionId = -1;
@@ -168,7 +168,7 @@ async function fetchAllFactionMembersToCache() {
   const factionJson = await fetchFaction(enemyFactionId);
   const memberIds = Object.keys(factionJson.members);
 
-  const MAX_REQUEST_NUM = 110;
+  const MAX_REQUEST_NUM = 150;
   const API_REQUEST_DELAY = 1000;
   let requestCount = 0;
   const timerId = setInterval(async () => {
