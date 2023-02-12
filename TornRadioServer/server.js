@@ -181,6 +181,8 @@ async function fetchAllFactionMembersToCache() {
       } catch (err) {
         logger(err);
       }
+    } else {
+      logger("Skip fetch player because already in cache " + memberIds[requestCount]);
     }
     requestCount++;
     if (requestCount > MAX_REQUEST_NUM) {
