@@ -83,6 +83,7 @@ async function fetchSpyDoc() {
   // Read multi-line raw string at "J1". Fill column "I". Log failure at "K1".
   const rawStr = sheet.getCellByA1("J1").value + "\n";
   logger("Raw str lines: " + rawStr.split("\n").length);
+  let failedListStr = "Failed raw strings: \n";
   rawStr.split("\n").forEach((line) => {
     let isFound = -1;
     let words = line.split(" ");
@@ -169,7 +170,7 @@ async function fetchAllFactionMembersToCache() {
   const memberIds = Object.keys(factionJson.members);
 
   const MAX_REQUEST_NUM = 150;
-  const API_REQUEST_DELAY = 500;
+  const API_REQUEST_DELAY = 1500;
   let requestCount = 0;
   const timerId = setInterval(async () => {
     if (!playerCache.has(memberIds[requestCount])) {
