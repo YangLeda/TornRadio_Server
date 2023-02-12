@@ -81,7 +81,7 @@ async function fetchSpyDoc() {
   await sheet.loadCells();
 
   // Read multi-line raw string at "J1". Fill column "I". Log failure at "K1".
-  const rawStr = sheet.getCellByA1("J1").value;
+  const rawStr = sheet.getCellByA1("J1").value + "\n";
   logger("Raw str lines: " + rawStr.split("\n").length);
   let failedListStr = "Failed raw strings: \n";
   rawStr.split("\n").forEach((line) => {
