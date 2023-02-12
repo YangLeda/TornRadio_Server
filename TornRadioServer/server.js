@@ -233,21 +233,21 @@ async function fetchEnemyFactionId() {
     const res = await fetch(`https://api.torn.com/faction/${MY_FACTION_ID}?selections=basic&key=${process.env.TORN_API_KEY}`);
     const json = await res.json();
     if (!json) {
-      console.warn("fetchEnemyFactionId Empty json  " + getDateStr());
+      console.warn("fetchEnemyFactionId Empty json");
       return -1;
     }
     if (json["ranked_wars"] == undefined) {
-      console.warn("fetchEnemyFactionId Failed to read json  " + getDateStr());
+      console.warn("fetchEnemyFactionId Failed to read json");
       return -1;
     }
     let rwJson = json["ranked_wars"];
     if (Object.keys(rwJson).length <= 0 || Object.keys(rwJson)[0] == undefined) {
-      console.warn("fetchEnemyFactionId Failed to read rwJson  " + getDateStr());
+      console.warn("fetchEnemyFactionId Failed to read rwJson");
       return -1;
     }
     let keys = Object.keys(rwJson[Object.keys(rwJson)[0]]["factions"]);
     let enemyFactionId = parseInt(keys[0]) == parseInt(MY_FACTION_ID) ? parseInt(keys[1]) : parseInt(keys[0]);
-    console.log("fetchEnemyFactionId result = " + enemyFactionId + " " + getDateStr());
+    console.log("fetchEnemyFactionId result = " + enemyFactionId);
     return enemyFactionId;
   } catch (err) {
     console.warn(err);
