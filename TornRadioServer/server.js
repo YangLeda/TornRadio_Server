@@ -8,9 +8,11 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 
 const app = express();
 const port = 3001;
+const MY_FACTION_ID = 41066;
 const FETCH_MEMBER_DETAILS_INTERVAL = 300000;  // 5 minutes
 const FETCH_SPY_DOC_INTERVAL = 300000;  // 5 minutes
 
+let enemyFactionId = -1;
 let playerCache = new Map();
 let spyData = new Map();
 
@@ -21,9 +23,9 @@ setInterval(async () => {
   fetchSpyDoc();
 }, FETCH_SPY_DOC_INTERVAL);
 
-fetchAllFactionMembersToCache(process.env.FACTION_ID);
+fetchAllFactionMembersToCache();
 setInterval(async () => {
-  fetchAllFactionMembersToCache(process.env.FACTION_ID);
+  fetchAllFactionMembersToCache();
 }, FETCH_MEMBER_DETAILS_INTERVAL);
 
 // CORS
@@ -36,8 +38,7 @@ app.use(
 // faction API
 app.get("/faction", async (req, res) => {
   logger(`faction API access ${req.ip}`);
-  let factionId = req.query.id ? req.query.id : process.env.FACTION_ID;
-  res.send(await fetchFaction(factionId));
+  res.send(await fetchFaction(enemyFactionId));
 });
 
 // cache API
@@ -158,23 +159,30 @@ async function fetchFaction(factionId) {
   }
 }
 
-async function fetchAllFactionMembersToCache(factionId) {
-  logger("fetchAllFactionMembersToCache() start " + factionId);
-  const factionJson = await fetchFaction(factionId);
+async function fetchAllFactionMembersToCache() {
+  logger("fetchAllFactionMembersToCache() start");
+  let temp = fetchEnemyFactionId();
+  if (enemyFactionId != -1 && enemyFactionId != temp) {
+    enemyFactionId = temp;
+    playerCache.clear();
+    logger("fetchAllFactionMembersToCache() enemy faction ID changed, clear playerCache map");
+  }
+  const factionJson = await fetchFaction(enemyFactionId);
   const memberIds = Object.keys(factionJson.members);
 
   const MAX_REQUEST_NUM = 150;
   const API_REQUEST_DELAY = 1500;
   let requestCount = 0;
   const timerId = setInterval(async () => {
-    try {
-      const res = await fetch(`https://api.torn.com/user/${memberIds[requestCount]}?selections=basic,profile,personalstats,crimes&key=${process.env.TORN_API_KEY}`);
-      const json = await res.json();
-      cachePlayer(memberIds[requestCount], json);
-    } catch (err) {
-      logger(err);
+    if (!playerCache.has(memberIds[requestCount])) {
+      try {
+        const res = await fetch(`https://api.torn.com/user/${memberIds[requestCount]}?selections=basic,profile,personalstats,crimes&key=${process.env.TORN_API_KEY}`);
+        const json = await res.json();
+        cachePlayer(memberIds[requestCount], json);
+      } catch (err) {
+        logger(err);
+      }
     }
-
     requestCount++;
     if (requestCount > MAX_REQUEST_NUM) {
       logger("fetchAllFactionMembersToCache stopped because MAX_REQUEST_NUM reached.");
@@ -218,4 +226,30 @@ function getSpyJson() {
     obj[key] = value;
   });
   return JSON.stringify(obj);
+}
+
+async function fetchEnemyFactionId() {
+  try {
+    const res = await fetch(`https://api.torn.com/faction/${MY_FACTION_ID}?selections=basic&key=${TORN_API_KEY}`);
+    const json = await res.json();
+    if (!json) {
+      console.warn("fetchEnemyFactionId Empty json  " + getDateStr());
+      return -1;
+    }
+    if (json["ranked_wars"] == undefined) {
+      console.warn("fetchEnemyFactionId Failed to read json  " + getDateStr());
+      return -1;
+    }
+    let rwJson = json["ranked_wars"];
+    if (Object.keys(rwJson).length <= 0 || Object.keys(rwJson)[0] == undefined) {
+      console.warn("fetchEnemyFactionId Failed to read rwJson  " + getDateStr());
+      return -1;
+    }
+    let keys = Object.keys(rwJson[Object.keys(rwJson)[0]]["factions"]);
+    let enemyFactionId = parseInt(keys[0]) == parseInt(MY_FACTION_ID) ? parseInt(keys[1]) : parseInt(keys[0]);
+    console.log("fetchEnemyFactionId result = " + enemyFactionId + " " + getDateStr());
+    return enemyFactionId;
+  } catch (err) {
+    console.warn(err);
+  }
 }
