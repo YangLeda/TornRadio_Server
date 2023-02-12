@@ -230,7 +230,7 @@ function getSpyJson() {
 
 async function fetchEnemyFactionId() {
   try {
-    const res = await fetch(`https://api.torn.com/faction/${MY_FACTION_ID}?selections=basic&key=${TORN_API_KEY}`);
+    const res = await fetch(`https://api.torn.com/faction/${MY_FACTION_ID}?selections=basic&key=${process.env.TORN_API_KEY}`);
     const json = await res.json();
     if (!json) {
       console.warn("fetchEnemyFactionId Empty json  " + getDateStr());
