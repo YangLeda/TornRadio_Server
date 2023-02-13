@@ -12,7 +12,7 @@ const MY_FACTION_ID = 41066;
 const FETCH_MEMBER_DETAILS_INTERVAL = 300000;  // 5 minutes
 const FETCH_SPY_DOC_INTERVAL = 180000;  // 3 minutes
 
-let enemyFactionId = -1;
+let enemyFactionId = MY_FACTION_ID;
 let playerCache = new Map();
 let spyData = new Map();
 
