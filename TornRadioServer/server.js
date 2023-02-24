@@ -59,7 +59,7 @@ app.listen(port, () => {
 
 async function fetchSpyDoc() {
   logger("fetchSpyDoc start");
-  const MAX_ROW_COUNT = 200;
+  const MAX_ROW_COUNT = 110;
   const doc = new GoogleSpreadsheet(process.env.SPY_DOC_ID);
   await doc.useServiceAccountAuth({
     client_email: process.env.GOOGLE_EMAIL,
@@ -70,61 +70,60 @@ async function fetchSpyDoc() {
   logger(`fetchSpyDoc ${doc.title} ${sheet.title} ${sheet.rowCount}`);
   await sheet.loadCells();
 
-  // Clear colomn "I".
-  for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
+  // Clear colomn "J".
+  for (let i = 0; i < MAX_ROW_COUNT; i++) {
     let cell = sheet.getCell(i, 0);
     if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
-      sheet.getCell(i, 8).value = "";
-    }
+      sheet.getCell(i, 9).value = "";
   }
   await sheet.saveUpdatedCells();
   await sheet.loadCells();
 
-  // Read multi-line raw string at "J1". Fill column "I". Log failure at "K1".
-  const rawStr = sheet.getCellByA1("J1").value + "\n";
-  let failedListStr = "Failed raw strings: \n";
-  rawStr.split("\n").forEach((line) => {
-    let isFound = -1;
-    let words = line.split(" ");
-    for (let i = 0; i < words.length && isFound < 0; i++) {  // each word in raw string line
-      for (let j = 0; j < MAX_ROW_COUNT; j++) {  // each row
-        let cell = sheet.getCell(j, 0);
-        if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
-          if (cell.value.substring(0, cell.value.indexOf("[")) == words[i]) {
-            sheet.getCell(j, 8).value = line;
-            isFound = j;
-          }
-        }
-      }
-    }
-    if (isFound < 0) {
-      failedListStr += line + "\n";
-    }
-  });
-  sheet.getCellByA1("K1").value = failedListStr;
+  // Read input raw string at "I1".
+  const rawStr = sheet.getCellByA1("I1").value.replace(/,/g, "").replace(/\n/g, " ");
+  sheet.getCellByA1("K1").value = rawStr;
+  // rawStr.split(" ").forEach((line) => {
+  //   let isFound = -1;
+  //   let words = line.split(" ");
+  //   for (let i = 0; i < words.length && isFound < 0; i++) {  // each word in raw string line
+  //     for (let j = 0; j < MAX_ROW_COUNT; j++) {  // each row
+  //       let cell = sheet.getCell(j, 0);
+  //       if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
+  //         if (cell.value.substring(0, cell.value.indexOf("[")) == words[i]) {
+  //           sheet.getCell(j, 8).value = line;
+  //           isFound = j;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   if (isFound < 0) {
+  //     failedListStr += line + "\n";
+  //   }
+  // });
+  // sheet.getCellByA1("K1").value = failedListStr;
   await sheet.saveUpdatedCells();
   await sheet.loadCells();
 
-  // Parse numbers and fill cells
-  for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
-    let cellId = sheet.getCell(i, 0);
-    let cellParsedLine = sheet.getCell(i, 8);
-    if (typeof (cellParsedLine.value) == "string" && cellParsedLine.value != "" && typeof (cellId.value) === "string" && cellId.value.indexOf("[") > 0 && cellId.value.indexOf("]") > 0 && !isNaN(cellId.value.substring(cellId.value.indexOf("[") + 1, cellId.value.indexOf("]")))) {
-      let line = cellParsedLine.value.replace(/,/g, "");
-      let matches = line.match(/( |$)\d+( |$)/g);
-      if (matches.length >= 4 && matches.length <= 5) {
-        for (let j = 0; j < matches.length; j++) {
-          sheet.getCell(i, j + 2).value = parseInt(matches[j]);
-          sheet.getCell(i, j + 2).textFormat = { bold: true };
-        }
-        cellParsedLine.value = "Added: " + cellParsedLine.value;
-      } else {
-        logger("too little or too many numbers muched for line: " + line);
-      }
-    }
-  }
-  await sheet.saveUpdatedCells();
-  await sheet.loadCells();
+  // // Parse numbers and fill cells
+  // for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
+  //   let cellId = sheet.getCell(i, 0);
+  //   let cellParsedLine = sheet.getCell(i, 8);
+  //   if (typeof (cellParsedLine.value) == "string" && cellParsedLine.value != "" && typeof (cellId.value) === "string" && cellId.value.indexOf("[") > 0 && cellId.value.indexOf("]") > 0 && !isNaN(cellId.value.substring(cellId.value.indexOf("[") + 1, cellId.value.indexOf("]")))) {
+  //     let line = cellParsedLine.value.replace(/,/g, "");
+  //     let matches = line.match(/( |$)\d+( |$)/g);
+  //     if (matches.length >= 4 && matches.length <= 5) {
+  //       for (let j = 0; j < matches.length; j++) {
+  //         sheet.getCell(i, j + 2).value = parseInt(matches[j]);
+  //         sheet.getCell(i, j + 2).textFormat = { bold: true };
+  //       }
+  //       cellParsedLine.value = "Added: " + cellParsedLine.value;
+  //     } else {
+  //       logger("too little or too many numbers muched for line: " + line);
+  //     }
+  //   }
+  // }
+  // await sheet.saveUpdatedCells();
+  // await sheet.loadCells();
 
   // Read data
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
