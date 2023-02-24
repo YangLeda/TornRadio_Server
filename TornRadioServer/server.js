@@ -82,7 +82,7 @@ async function fetchSpyDoc() {
   sheet.getCellByA1("K1").value = "";
 
   // Read input raw string at "I1", parse and write them back as single lines.
-  const treatedRawStr = sheet.getCellByA1("I1").value.replace(/,/g, "").replace(/\n/g, " ").replace(/\[/g, " [");
+  const treatedRawStr = sheet.getCellByA1("I1").value.replace(/,/g, "").replace(/\n/g, " ").replace(/\[/g, " [");  // Treat the whole raw string with replace() here to support more formats.
   sheet.getCellByA1("K1").value = treatedRawStr;
   let words = treatedRawStr.split(" ");
   let playerRow = -1;
@@ -109,7 +109,11 @@ async function fetchSpyDoc() {
   logger(`fetchSpyDoc Filled single lines number: ${singleLineRowIndexes.length}`);
 
   // Parse single lines and fill cells.
-
+  singleLineRowIndexes.forEach((rowIndex) => {
+    let line = sheet.getCell(rowIndex, 9).value;
+    let matches = line.match(/Strength: \d+ /g);
+    sheet.getCell(rowIndex, 2).value = parseInt(matches[0]);
+  });
 
 
   // // Parse numbers and fill cells
