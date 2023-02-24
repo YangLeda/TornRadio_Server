@@ -99,7 +99,7 @@ async function fetchSpyDoc() {
     }
   });
   if (playerRow > 0) {
-    sheet.getCell(playerRow, 9).value = playerLine;
+    sheet.getCell(playerRow, 9).value = playerLine.replace(/\s\s+/g, " ");
   }
 
   //words.slice(0, 5).join();
