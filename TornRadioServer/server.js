@@ -121,7 +121,7 @@ async function fetchSpyDoc() {
   //       logger("too little or too many numbers muched for line: " + line);
   //     }
   //   }
-  // }
+  }
   // await sheet.saveUpdatedCells();
   // await sheet.loadCells();
 
