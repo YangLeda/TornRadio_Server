@@ -121,7 +121,7 @@ async function fetchSpyDoc() {
     }
     matches = line.match(/Speed: \d+ /g);
     if (matches && matches.length == 1) {
-      sheet.getCell(rowIndex, 2).value = parseInt(matches[0].substring(7, matches[0].length - 1));
+      sheet.getCell(rowIndex, 3).value = parseInt(matches[0].substring(7, matches[0].length - 1));
     }
     matches = line.match(/Speed: N\/A /g);
     if (matches && matches.length == 1) {
@@ -129,7 +129,7 @@ async function fetchSpyDoc() {
     }
     matches = line.match(/Dexterity: \d+ /g);
     if (matches && matches.length == 1) {
-      sheet.getCell(rowIndex, 2).value = parseInt(matches[0].substring(11, matches[0].length - 1));
+      sheet.getCell(rowIndex, 4).value = parseInt(matches[0].substring(11, matches[0].length - 1));
     }
     matches = line.match(/Dexterity: N\/A /g);
     if (matches && matches.length == 1) {
@@ -137,7 +137,7 @@ async function fetchSpyDoc() {
     }
     matches = line.match(/Defense: \d+ /g);
     if (matches && matches.length == 1) {
-      sheet.getCell(rowIndex, 2).value = parseInt(matches[0].substring(9, matches[0].length - 1));
+      sheet.getCell(rowIndex, 5).value = parseInt(matches[0].substring(9, matches[0].length - 1));
     }
     matches = line.match(/Defense: N\/A /g);
     if (matches && matches.length == 1) {
@@ -145,7 +145,7 @@ async function fetchSpyDoc() {
     }
     matches = line.match(/Total: \d+ /g);
     if (matches && matches.length == 1) {
-      sheet.getCell(rowIndex, 2).value = parseInt(matches[0].substring(7, matches[0].length - 1));
+      sheet.getCell(rowIndex, 6).value = parseInt(matches[0].substring(7, matches[0].length - 1));
     }
     matches = line.match(/Total: N\/A /g);
     if (matches && matches.length == 1) {
