@@ -70,20 +70,39 @@ async function fetchSpyDoc() {
   logger(`fetchSpyDoc ${doc.title} ${sheet.title} ${sheet.rowCount}`);
   await sheet.loadCells();
 
-  // Clear colomn "J".
+  // Build name-row map from sheet. Also clear "J" and "K1".
+  let nameToRowIndexMap = new Map();
   for (let i = 0; i < MAX_ROW_COUNT; i++) {
-    let cell = sheet.getCell(i, 0);
     if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
+      nameToRowIndexMap.set(cell.value.substring(0, cell.value.indexOf("[")), i);
       sheet.getCell(i, 9).value = "";
+    }
   }
-  await sheet.saveUpdatedCells();
-  await sheet.loadCells();
+  sheet.getCellByA1("K1").value = "";
 
   // Read input raw string at "I1".
-  const rawStr = sheet.getCellByA1("I1").value.replace(/,/g, "").replace(/\n/g, " ").replace(/\[/g, " [");
-  let words = rawStr.split(" ");
-  words.subarray(0, 5).join();
-  sheet.getCellByA1("K1").value = rawStr; // test
+  const treatedRawStr = sheet.getCellByA1("I1").value.replace(/,/g, "").replace(/\n/g, " ").replace(/\[/g, " [");
+  sheet.getCellByA1("K1").value = treatedRawStr;
+  let words = treatedRawStr.split(" ");
+  let playerRow = -1;
+  let playerLine = "";
+  words.forEach((word) => {
+    if (nameToRowIndexMap.has(word)) {
+      if (playerRow > 0) {
+        sheet.getCell(playerRow, 9).value = playerLine;
+      }
+      playerRow = nameToRowIndexMap.get(word);
+      playerLine = word;
+    } else {
+      playerLine += word;
+    }
+  });
+  if (playerRow > 0) {
+    sheet.getCell(playerRow, 9).value = playerLine;
+  }
+
+  //words.slice(0, 5).join();
+
   // rawStr.split(" ").forEach((line) => {
   //   let isFound = -1;
   //   let words = line.split(" ");
@@ -123,7 +142,7 @@ async function fetchSpyDoc() {
   //       logger("too little or too many numbers muched for line: " + line);
   //     }
   //   }
-  }
+  //}
   // await sheet.saveUpdatedCells();
   // await sheet.loadCells();
 
