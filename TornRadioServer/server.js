@@ -111,7 +111,7 @@ async function fetchSpyDoc() {
   // Parse single lines and fill cells.
   singleLineRowIndexes.forEach((rowIndex) => {
     let line = sheet.getCell(rowIndex, 9).value;
-    let matches = line.match(/Strength: \d+ /g);
+    let matches = line.match(/Strength: (\d+|N\/A) /g);
     sheet.getCell(rowIndex, 2).value = parseInt(matches[0]);
   });
 
