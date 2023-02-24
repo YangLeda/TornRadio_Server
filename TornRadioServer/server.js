@@ -82,7 +82,7 @@ async function fetchSpyDoc() {
   // Read input raw string at "I1".
   const rawStr = sheet.getCellByA1("I1").value.replace(/,/g, "").replace(/\n/g, " ").replace(/\[/g, " [");
   let words = rawStr.split(" ");
-  words.subArray(0, 5).join();
+  words.subarray(0, 5).join();
   sheet.getCellByA1("K1").value = rawStr; // test
   // rawStr.split(" ").forEach((line) => {
   //   let isFound = -1;
