@@ -112,11 +112,11 @@ async function fetchSpyDoc() {
   singleLineRowIndexes.forEach((rowIndex) => {
     let line = sheet.getCell(rowIndex, 9).value;
     let matches = line.match(/Strength: \d+ /g);
-    if (matches.length == 1) {
+    if (matches && matches.length == 1) {
       sheet.getCell(rowIndex, 2).value = parseInt(matches[0].substring(10, matches[0].length - 1));
     }
     matches = line.match(/Strength: N\/A /g);
-    if (matches.length == 1) {
+    if (matches && matches.length == 1) {
       sheet.getCell(rowIndex, 2).value = "N/A";
     }
     
