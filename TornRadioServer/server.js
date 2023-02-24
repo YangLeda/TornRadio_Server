@@ -109,13 +109,7 @@ async function fetchSpyDoc() {
   logger(`fetchSpyDoc Filled single lines number: ${singleLineRowIndexes.length}`);
 
   // Parse single lines and fill cells.
-  for (let i = 0; i < MAX_ROW_COUNT; i++) {
-    let lineCell = sheet.getCell(i, 0);
-    if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
-      nameToRowIndexMap.set(cell.value.substring(0, cell.value.indexOf("[")), i);
-      sheet.getCell(i, 9).value = "";
-    }
-  }
+
 
 
   // // Parse numbers and fill cells
