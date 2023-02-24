@@ -81,16 +81,18 @@ async function fetchSpyDoc() {
   }
   sheet.getCellByA1("K1").value = "";
 
-  // Read input raw string at "I1".
+  // Read input raw string at "I1", parse and write them back as single lines.
   const treatedRawStr = sheet.getCellByA1("I1").value.replace(/,/g, "").replace(/\n/g, " ").replace(/\[/g, " [");
   sheet.getCellByA1("K1").value = treatedRawStr;
   let words = treatedRawStr.split(" ");
   let playerRow = -1;
   let playerLine = "";
+  let singleLineRowIndexes = [];
   words.forEach((word) => {
     if (nameToRowIndexMap.has(word)) {
       if (playerRow > 0) {
-        sheet.getCell(playerRow, 9).value = playerLine;
+        sheet.getCell(playerRow, 9).value = playerLine.replace(/\s+/g, " ");
+        singleLineRowIndexes.push(playerRow);
       }
       playerRow = nameToRowIndexMap.get(word);
       playerLine = word;
@@ -100,31 +102,21 @@ async function fetchSpyDoc() {
   });
   if (playerRow > 0) {
     sheet.getCell(playerRow, 9).value = playerLine.replace(/\s+/g, " ");
+    singleLineRowIndexes.push(playerRow);
   }
-
-  //words.slice(0, 5).join();
-
-  // rawStr.split(" ").forEach((line) => {
-  //   let isFound = -1;
-  //   let words = line.split(" ");
-  //   for (let i = 0; i < words.length && isFound < 0; i++) {  // each word in raw string line
-  //     for (let j = 0; j < MAX_ROW_COUNT; j++) {  // each row
-  //       let cell = sheet.getCell(j, 0);
-  //       if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
-  //         if (cell.value.substring(0, cell.value.indexOf("[")) == words[i]) {
-  //           sheet.getCell(j, 8).value = line;
-  //           isFound = j;
-  //         }
-  //       }
-  //     }
-  //   }
-  //   if (isFound < 0) {
-  //     failedListStr += line + "\n";
-  //   }
-  // });
-  // sheet.getCellByA1("K1").value = failedListStr;
   await sheet.saveUpdatedCells();
   await sheet.loadCells();
+  logger(`fetchSpyDoc Filled single lines number: ${singleLineRowIndexes.length}`);
+
+  // Parse single lines and fill cells.
+  for (let i = 0; i < MAX_ROW_COUNT; i++) {
+    let lineCell = sheet.getCell(i, 0);
+    if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
+      nameToRowIndexMap.set(cell.value.substring(0, cell.value.indexOf("[")), i);
+      sheet.getCell(i, 9).value = "";
+    }
+  }
+
 
   // // Parse numbers and fill cells
   // for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
