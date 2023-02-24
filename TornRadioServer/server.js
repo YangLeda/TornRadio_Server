@@ -82,7 +82,7 @@ async function fetchSpyDoc() {
   sheet.getCellByA1("K1").value = "";
 
   // Read input raw string at "I1", parse and write them back as single lines.
-  const rawStr = sheet.getCellByA1("I1").value;
+  let rawStr = sheet.getCellByA1("I1").value;
   if (!rawStr) {
     rawStr = "";
     sheet.getCellByA1("I1").value = "Put raw spy data string here.";
