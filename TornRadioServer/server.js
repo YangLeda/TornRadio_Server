@@ -110,7 +110,7 @@ async function fetchSpyDoc() {
 
   // Parse single lines and fill cells.
   singleLineRowIndexes.forEach((rowIndex) => {
-    let line = sheet.getCell(rowIndex, 9).value;
+    let line = sheet.getCell(rowIndex, 9).value + " ";
     let matches = line.match(/Strength: \d+ /g);
     if (matches && matches.length == 1) {
       sheet.getCell(rowIndex, 2).value = parseInt(matches[0].substring(10, matches[0].length - 1));
@@ -154,6 +154,7 @@ async function fetchSpyDoc() {
   });
   await sheet.saveUpdatedCells();
   await sheet.loadCells();
+  logger(`fetchSpyDoc Filled table`);
 
   // Read data
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
