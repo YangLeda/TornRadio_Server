@@ -95,7 +95,7 @@ async function fetchSpyDoc() {
       playerRow = nameToRowIndexMap.get(word);
       playerLine = word;
     } else {
-      playerLine += word;
+      playerLine += " " + word;
     }
   });
   if (playerRow > 0) {
