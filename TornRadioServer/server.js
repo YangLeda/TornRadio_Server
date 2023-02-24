@@ -119,30 +119,41 @@ async function fetchSpyDoc() {
     if (matches && matches.length == 1) {
       sheet.getCell(rowIndex, 2).value = "N/A";
     }
-    
+    matches = line.match(/Speed: \d+ /g);
+    if (matches && matches.length == 1) {
+      sheet.getCell(rowIndex, 2).value = parseInt(matches[0].substring(7, matches[0].length - 1));
+    }
+    matches = line.match(/Speed: N\/A /g);
+    if (matches && matches.length == 1) {
+      sheet.getCell(rowIndex, 3).value = "N/A";
+    }
+    matches = line.match(/Dexterity: \d+ /g);
+    if (matches && matches.length == 1) {
+      sheet.getCell(rowIndex, 2).value = parseInt(matches[0].substring(11, matches[0].length - 1));
+    }
+    matches = line.match(/Dexterity: N\/A /g);
+    if (matches && matches.length == 1) {
+      sheet.getCell(rowIndex, 4).value = "N/A";
+    }
+    matches = line.match(/Defense: \d+ /g);
+    if (matches && matches.length == 1) {
+      sheet.getCell(rowIndex, 2).value = parseInt(matches[0].substring(9, matches[0].length - 1));
+    }
+    matches = line.match(/Defense: N\/A /g);
+    if (matches && matches.length == 1) {
+      sheet.getCell(rowIndex, 5).value = "N/A";
+    }
+    matches = line.match(/Total: \d+ /g);
+    if (matches && matches.length == 1) {
+      sheet.getCell(rowIndex, 2).value = parseInt(matches[0].substring(7, matches[0].length - 1));
+    }
+    matches = line.match(/Total: N\/A /g);
+    if (matches && matches.length == 1) {
+      sheet.getCell(rowIndex, 6).value = "N/A";
+    }
   });
-
-
-  // // Parse numbers and fill cells
-  // for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
-  //   let cellId = sheet.getCell(i, 0);
-  //   let cellParsedLine = sheet.getCell(i, 8);
-  //   if (typeof (cellParsedLine.value) == "string" && cellParsedLine.value != "" && typeof (cellId.value) === "string" && cellId.value.indexOf("[") > 0 && cellId.value.indexOf("]") > 0 && !isNaN(cellId.value.substring(cellId.value.indexOf("[") + 1, cellId.value.indexOf("]")))) {
-  //     let line = cellParsedLine.value.replace(/,/g, "");
-  //     let matches = line.match(/( |$)\d+( |$)/g);
-  //     if (matches.length >= 4 && matches.length <= 5) {
-  //       for (let j = 0; j < matches.length; j++) {
-  //         sheet.getCell(i, j + 2).value = parseInt(matches[j]);
-  //         sheet.getCell(i, j + 2).textFormat = { bold: true };
-  //       }
-  //       cellParsedLine.value = "Added: " + cellParsedLine.value;
-  //     } else {
-  //       logger("too little or too many numbers muched for line: " + line);
-  //     }
-  //   }
-  //}
-  // await sheet.saveUpdatedCells();
-  // await sheet.loadCells();
+  await sheet.saveUpdatedCells();
+  await sheet.loadCells();
 
   // Read data
   for (let i = 0; i < MAX_ROW_COUNT; i++) {  // each row
