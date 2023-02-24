@@ -73,6 +73,7 @@ async function fetchSpyDoc() {
   // Build name-row map from sheet. Also clear "J" and "K1".
   let nameToRowIndexMap = new Map();
   for (let i = 0; i < MAX_ROW_COUNT; i++) {
+    let cell = sheet.getCell(i, 0);
     if (typeof (cell.value) === "string" && cell.value.indexOf("[") > 0 && cell.value.indexOf("]") > 0 && !isNaN(cell.value.substring(cell.value.indexOf("[") + 1, cell.value.indexOf("]")))) {
       nameToRowIndexMap.set(cell.value.substring(0, cell.value.indexOf("[")), i);
       sheet.getCell(i, 9).value = "";
