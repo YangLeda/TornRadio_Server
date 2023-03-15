@@ -66,7 +66,6 @@ setInterval(async () => {
 }, FETCH_TORNSTATS_SPY_INTERVAL);
 
 async function fetchSpyDoc() {
-  logger("fetchSpyDoc start");
   const MAX_ROW_COUNT = 110;
   const doc = new GoogleSpreadsheet(process.env.SPY_DOC_ID);
   await doc.useServiceAccountAuth({
@@ -75,7 +74,6 @@ async function fetchSpyDoc() {
   });
   await doc.loadInfo();
   const sheet = doc.sheetsByIndex[0];
-  logger(`fetchSpyDoc from ${doc.title} | ${sheet.title} | ${sheet.rowCount}`);
   await sheet.loadCells();
 
   // Read data
@@ -141,7 +139,6 @@ async function fetchTornStatsSpy(factionId) {
 }
 
 async function FillTornStatsSpyToCache() {
-  logger("FillTornStatsSpyToCache start");
   const json = await fetchTornStatsSpy(enemyFactionId);
   if (!json) {
     logger("FillTornStatsSpyToCache failed to fetchTornStatsSpy " + factionId);
@@ -178,7 +175,6 @@ async function getEnemyFactionId() {
 }
 
 async function fetchAllPlayersToCache() {
-  logger("fetchAllPlayersToCache() start");
   let temp = await getEnemyFactionId();
   if (temp != 0 && enemyFactionId != temp) {
     enemyFactionId = temp;
