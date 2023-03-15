@@ -10,6 +10,7 @@ const app = express();
 const port = 3001;
 const MY_FACTION_ID = process.env.FACTION_ID;
 const API_REQUEST_DELAY = 200;
+const FETCH_FACTION_INTERVAL = 10000;  // 10s
 const FETCH_SPY_DOC_INTERVAL = 180000;  // 3 minutes
 const FETCH_ALL_PLAYERS_INTERVAL = 1800000;  // 30 minutes
 const FETCH_TORNSTATS_SPY_INTERVAL = 1800000;  // 30 minutes
@@ -17,6 +18,7 @@ const FETCH_TORNSTATS_SPY_INTERVAL = 1800000;  // 30 minutes
 let enemyFactionId = MY_FACTION_ID;
 let playerCache = new Map();
 let spyData = new Map();
+let factionCache = "";
 
 logger("start");
 
@@ -27,7 +29,7 @@ app.use(
 );
 
 app.get("/faction", async (req, res) => {
-  res.send(await fetchFaction(enemyFactionId));
+  res.send(factionCache);
 });
 
 app.get("/cache", async (req, res) => {
@@ -42,6 +44,11 @@ app.get("/spy", async (req, res) => {
 app.listen(port, () => {
   logger(`TornRadio server start listening on port ${port}`);
 });
+
+fetchFaction(enemyFactionId);
+setInterval(async () => {
+  fetchFaction(enemyFactionId);
+}, FETCH_FACTION_INTERVAL);
 
 fetchSpyDoc();
 setInterval(async () => {
@@ -96,6 +103,7 @@ async function fetchFaction(factionId) {
     let res = await fetch(`https://api.torn.com/faction/${factionId}?selections=&key=${process.env.TORN_API_KEY}`);
     let json = await res.json();
     if (json["members"]) {
+      factionCache = json;
       return json;
     } else {
       logger("fetchFaction " + factionId + " failed and retry");
