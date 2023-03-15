@@ -26,7 +26,6 @@ app.use(
 );
 
 app.get("/faction", async (req, res) => {
-  logger(`faction API access ${req.ip}`);
   res.send(await fetchFaction(enemyFactionId));
 });
 
@@ -36,7 +35,6 @@ app.get("/cache", async (req, res) => {
 });
 
 app.get("/spy", async (req, res) => {
-  logger(`spy API access ${req.ip}`);
   res.send(getSpyJson());
 });
 
