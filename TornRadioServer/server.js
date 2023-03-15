@@ -123,6 +123,11 @@ async function fetchPlayer(playerId) {
 }
 
 async function fetchTornStatsSpy(factionId) {
+  if (factionId <= 0 || factionId == 9356 || factionId == 36134 || factionId == 16424 || factionId == 10741 || factionId == 20465 || factionId == 27902 || factionId == 16335) {
+    logger("fetchTornStatsSpy hide friendly faction spy " + factionId);
+    return null;
+  }
+
   let retryCount = 0;
   while (retryCount < 2) {
     retryCount++;
