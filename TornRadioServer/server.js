@@ -10,8 +10,9 @@ const app = express();
 const port = 3001;
 const MY_FACTION_ID = process.env.FACTION_ID;
 const API_REQUEST_DELAY = 200;
-const FETCH_ALL_PLAYERS_INTERVAL = 3600000;  // 1 hour
 const FETCH_SPY_DOC_INTERVAL = 180000;  // 3 minutes
+const FETCH_ALL_PLAYERS_INTERVAL = 1800000;  // 30 minutes
+const FETCH_TORNSTATS_SPY_INTERVAL = 1800000;  // 30 minutes
 
 let enemyFactionId = MY_FACTION_ID;
 let playerCache = new Map();
@@ -52,6 +53,11 @@ setInterval(async () => {
   fetchAllPlayersToCache();
 }, FETCH_ALL_PLAYERS_INTERVAL);
 
+FillTornStatsSpyToCache();
+setInterval(async () => {
+  FillTornStatsSpyToCache();
+}, FETCH_TORNSTATS_SPY_INTERVAL);
+
 async function fetchSpyDoc() {
   logger("fetchSpyDoc start");
   const MAX_ROW_COUNT = 110;
@@ -77,6 +83,7 @@ async function fetchSpyDoc() {
       obj.dex = sheet.getCell(i, 7).value == null || isNaN(sheet.getCell(i, 7).value) ? 0 : sheet.getCell(i, 7).value;
       obj.def = sheet.getCell(i, 6).value == null || isNaN(sheet.getCell(i, 6).value) ? 0 : sheet.getCell(i, 6).value;
       obj.total = sheet.getCell(i, 8).value == null || isNaN(sheet.getCell(i, 8).value) ? 0 : sheet.getCell(i, 8).value;
+      obj.source = "Imported";
       spyData.set(id, obj);
     }
   }
@@ -109,6 +116,47 @@ async function fetchPlayer(playerId) {
   }
 }
 
+async function fetchTornStatsSpy(factionId) {
+  let retryCount = 0;
+  while (retryCount < 2) {
+    retryCount++;
+    await new Promise(resolve => setTimeout(resolve, API_REQUEST_DELAY));
+    let res = await fetch(`https://www.tornstats.com/api/v2/${process.env.TORNSTATS_API_KEY}/spy/faction/${factionId}`);
+    let json = await res.json();
+    if (json["status"] && json["status"] == true && json["faction"] && json["faction"]["members"]) {
+      return json;
+    } else {
+      logger("fetchTornStatsSpy " + factionId + " failed and retry count " + retryCount);
+    }
+  }
+  return null;
+}
+
+async function FillTornStatsSpyToCache() {
+  logger("FillTornStatsSpyToCache start");
+  const json = await fetchTornStatsSpy(enemyFactionId);
+  if (!json) {
+    logger("FillTornStatsSpyToCache failed to fetchTornStatsSpy " + factionId);
+    return;
+  }
+  const members = json["faction"]["members"];
+  const memberIds = Object.keys(members);
+  for (let i = 0; i < memberIds.length; i++) {
+    if ((!spyData.has(memberIds[i]) || spyData.get(memberIds[i]).source != "Imported") && (members[memberIds[i]]["spy"] && members[memberIds[i]]["spy"]["timestamp"])) {
+      let obj = new Object();
+      obj.id = memberIds[i];
+      obj.str = members[memberIds[i]]["spy"]["strength"] ? members[memberIds[i]]["spy"]["strength"] : 0;
+      obj.spd = members[memberIds[i]]["spy"]["speed"] ? members[memberIds[i]]["spy"]["speed"] : 0;
+      obj.dex = members[memberIds[i]]["spy"]["dexterity"] ? members[memberIds[i]]["spy"]["dexterity"] : 0;
+      obj.def = members[memberIds[i]]["spy"]["defense"] ? members[memberIds[i]]["spy"]["defense"] : 0;
+      obj.total = members[memberIds[i]]["spy"]["total"] ? members[memberIds[i]]["spy"]["total"] : 0;
+      obj.source = members[memberIds[i]]["spy"]["timestamp"];
+      spyData.set(memberIds[i], obj);
+    }
+  }
+  logger(`FillTornStatsSpyToCache done with spyData size = ${spyData.size}`);
+}
+
 async function getEnemyFactionId() {
   const json = await fetchFaction(MY_FACTION_ID);
   let rwJson = json["ranked_wars"];
@@ -127,7 +175,8 @@ async function fetchAllPlayersToCache() {
   if (temp != 0 && enemyFactionId != temp) {
     enemyFactionId = temp;
     playerCache.clear();
-    logger("fetchAllPlayersToCache enemy faction ID changed, clear playerCache map");
+    spyData.clear();
+    logger("fetchAllPlayersToCache enemy faction ID changed, clear cache maps");
   }
   const factionJson = await fetchFaction(enemyFactionId);
   const memberIds = Object.keys(factionJson.members);
