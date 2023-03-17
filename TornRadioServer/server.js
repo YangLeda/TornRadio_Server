@@ -101,7 +101,7 @@ async function fetchMonitor() {
     const selections = "basic,cooldowns,education,events,log,timestamp,notifications,refills";
     let res = await fetch(`https://api.torn.com/user/?selections=${selections}&key=${process.env.TORN_MONITOR_API_KEY}`);
     let json = await res.json();
-    if (json["status"] && json["status"] == true && json["faction"] && json["faction"]["members"]) {
+    if (json["timestamp"]) {
       return json;
     } else {
       logger("fetchMonitor failed and retry count " + retryCount);
