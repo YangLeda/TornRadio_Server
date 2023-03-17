@@ -192,7 +192,7 @@ async function fetchTornStatsSpy(factionId) {
 async function fillTornStatsSpyToCache() {
   const json = await fetchTornStatsSpy(enemyFactionId);
   if (!json) {
-    logger("fillTornStatsSpyToCache failed to fetchTornStatsSpy " + factionId);
+    logger("fillTornStatsSpyToCache failed to fetchTornStatsSpy " + enemyFactionId);
     return;
   }
   const members = json["faction"]["members"];
