@@ -21,6 +21,7 @@ let enemyFactionId = MY_FACTION_ID;
 let playerCache = new Map();
 let spyData = new Map();
 let factionCache = "";
+let monitorRawJson = "";
 let monitorEventsJson = {};
 monitorEventsJson["server_error"] = "Initiating";
 monitorEventsJson["last_api_timestamp"] = 0;
@@ -50,6 +51,10 @@ app.get("/spy", async (req, res) => {
 
 app.get("/monitor", async (req, res) => {
   res.send(getMonitorJson());
+});
+
+app.get("/monitor_raw", async (req, res) => {
+  res.send(monitorRawJson);
 });
 
 app.listen(port, () => {
@@ -87,6 +92,7 @@ async function handleMonitor() {
     monitorEventsJson["server_error"] = "Failed to fetch from Torn API";
     return;
   }
+  monitorRawJson = json;
   monitorEventsJson["server_error"] = "";
   monitorEventsJson["last_api_timestamp"] = json["timestamp"];
   monitorEventsJson["notifications"] = json["notifications"];
