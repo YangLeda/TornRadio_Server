@@ -13,19 +13,19 @@ function checkCooldowns(json, resultEvents) {
     if (json["cooldowns"]["drug"] <= 10) {
         resultEvents.push("No drug cooldown");
     }
-    if (json["cooldowns"]["medical"] <= 600) {
+    if (json["cooldowns"]["medical"] <= 1800) {
         resultEvents.push("No medical cooldown");
     }
-    if (json["cooldowns"]["booster"] <= 600) {
+    if (json["cooldowns"]["booster"] <= 1800) {
         resultEvents.push("No booster cooldown");
     }
 }
 
 function checkBars(json, resultEvents) {
-    if (json["energy"]["fulltime"] <= 600) {
+    if (json["energy"]["fulltime"] <= 1800) {
         resultEvents.push("Full energy bar");
     }
-    if (json["nerve"]["fulltime"] <= 600) {
+    if (json["nerve"]["fulltime"] <= 1800) {
         resultEvents.push("Full nerve bar");
     }
 }
@@ -37,7 +37,7 @@ function checkTravel(json, resultEvents) {
 }
 
 function checkHospital(json, resultEvents) {
-    if (json["states"]["hospital_timestamp"] > 0 && json["states"]["hospital_timestamp"] <= 600) {
+    if (json["states"]["hospital_timestamp"] - json["timestamp"] > 0 && json["states"]["hospital_timestamp"] - json["timestamp"] <= 300) {
         resultEvents.push("Out of hosipital in under 10 minutes");
     }
 }
