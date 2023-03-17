@@ -98,7 +98,7 @@ async function fetchMonitor() {
   while (retryCount < 3) {
     retryCount++;
     await new Promise(resolve => setTimeout(resolve, API_REQUEST_DELAY));
-    const selections = "basic,cooldowns,education,events,log,timestamp,notifications,refills";
+    const selections = "basic,profile,bars,cooldowns,education,events,log,timestamp,notifications";
     let res = await fetch(`https://api.torn.com/user/?selections=${selections}&key=${process.env.TORN_MONITOR_API_KEY}`);
     let json = await res.json();
     if (json["timestamp"]) {
