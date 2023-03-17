@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 import express from "express";
 import cors from "cors";
 import logger from "./logger.js";
+import createEvents from "./events.js";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
 const app = express();
@@ -14,11 +15,17 @@ const FETCH_FACTION_INTERVAL = 10000;  // 10s
 const FETCH_SPY_DOC_INTERVAL = 180000;  // 3 minutes
 const FETCH_ALL_PLAYERS_INTERVAL = 1800000;  // 30 minutes
 const FETCH_TORNSTATS_SPY_INTERVAL = 1800000;  // 30 minutes
+const FETCH_MONITOR_INTERVAL = 60000;  // 60s
 
 let enemyFactionId = MY_FACTION_ID;
 let playerCache = new Map();
 let spyData = new Map();
 let factionCache = "";
+let monitorEventsJson = {};
+monitorEventsJson["server_error"] = "Initiating";
+monitorEventsJson["last_api_timestamp"] = 0;
+monitorEventsJson["notifications"] = {};
+monitorEventsJson["events"] = [];
 
 logger("start");
 
@@ -41,6 +48,10 @@ app.get("/spy", async (req, res) => {
   res.send(getSpyJson());
 });
 
+app.get("/monitor", async (req, res) => {
+  res.send(getMonitorJson());
+});
+
 app.listen(port, () => {
   logger(`TornRadio server start listening on port ${port}`);
 });
@@ -60,10 +71,45 @@ setInterval(async () => {
   fetchAllPlayersToCache();
 }, FETCH_ALL_PLAYERS_INTERVAL);
 
-FillTornStatsSpyToCache();
+fillTornStatsSpyToCache();
 setInterval(async () => {
-  FillTornStatsSpyToCache();
+  fillTornStatsSpyToCache();
 }, FETCH_TORNSTATS_SPY_INTERVAL);
+
+handleMonitor();
+setInterval(async () => {
+  handleMonitor();
+}, FETCH_MONITOR_INTERVAL);
+
+async function handleMonitor() {
+  const json = await fetchMonitor();
+  if (!json) {
+    monitorEventsJson["server_error"] = "Failed to fetch from Torn API";
+    return;
+  }
+  monitorEventsJson["server_error"] = "";
+  monitorEventsJson["last_api_timestamp"] = json["timestamp"];
+  monitorEventsJson["notifications"] = json["notifications"];
+  monitorEventsJson["events"] = createEvents(json);
+}
+
+async function fetchMonitor() {
+  let retryCount = 0;
+  while (retryCount < 3) {
+    retryCount++;
+    await new Promise(resolve => setTimeout(resolve, API_REQUEST_DELAY));
+    const selections = "basic,cooldowns,education,events,log,timestamp,notifications,refills";
+    let res = await fetch(`https://api.torn.com/user/?selections=${selections}&key=${process.env.TORN_MONITOR_API_KEY}`);
+    let json = await res.json();
+    if (json["status"] && json["status"] == true && json["faction"] && json["faction"]["members"]) {
+      return json;
+    } else {
+      logger("fetchMonitor failed and retry count " + retryCount);
+    }
+  }
+  logger("fetchMonitor failed");
+  return null;
+}
 
 async function fetchSpyDoc() {
   const MAX_ROW_COUNT = 110;
@@ -143,10 +189,10 @@ async function fetchTornStatsSpy(factionId) {
   return null;
 }
 
-async function FillTornStatsSpyToCache() {
+async function fillTornStatsSpyToCache() {
   const json = await fetchTornStatsSpy(enemyFactionId);
   if (!json) {
-    logger("FillTornStatsSpyToCache failed to fetchTornStatsSpy " + factionId);
+    logger("fillTornStatsSpyToCache failed to fetchTornStatsSpy " + factionId);
     return;
   }
   const members = json["faction"]["members"];
@@ -164,7 +210,7 @@ async function FillTornStatsSpyToCache() {
       spyData.set(memberIds[i], obj);
     }
   }
-  logger(`FillTornStatsSpyToCache done with spyData size = ${spyData.size}`);
+  logger(`fillTornStatsSpyToCache done with spyData size = ${spyData.size}`);
 }
 
 async function getEnemyFactionId() {
@@ -211,4 +257,8 @@ function getSpyJson() {
     obj[key] = value;
   });
   return JSON.stringify(obj);
+}
+
+function getMonitorJson() {
+  return JSON.stringify(monitorEventsJson);
 }
