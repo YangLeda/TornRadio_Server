@@ -10,33 +10,60 @@ function createEvents(json) {
 }
 
 function checkCooldowns(json, resultEvents) {
-
-    resultEvents.push("event 1");
+    if (json["cooldowns"]["drug"] <= 0) {
+        resultEvents.push("No drug cooldown");
+    }
+    if (json["cooldowns"]["medical"] <= 0) {
+        resultEvents.push("No medical cooldown");
+    }
+    if (json["cooldowns"]["booster"] <= 0) {
+        resultEvents.push("No booster cooldown");
+    }
 }
 
 function checkBars(json, resultEvents) {
-    
-    resultEvents.push("event 2");
+    if (json["energy"]["fulltime"] <= 10) {
+        resultEvents.push("Full energy bar");
+    }
+    if (json["nerve"]["fulltime"] <= 10) {
+        resultEvents.push("Full nerve bar");
+    }
 }
 
 function checkTravel(json, resultEvents) {
-    
-    resultEvents.push("event 3");
+    if (json["status"]["state"] == "Abroad") {
+        resultEvents.push("Landed abroad");
+    }
 }
 
 function checkHospital(json, resultEvents) {
-    
-    resultEvents.push("event 4");
+    if (json["states"]["hospital_timestamp"] <= 600) {
+        resultEvents.push("Out of hosipital in under 10 minutes");
+    }
 }
 
 function checkEducation(json, resultEvents) {
-    
-    resultEvents.push("event 5");
+    if (json["education_timeleft"] <= 10) {
+        resultEvents.push("Education done");
+    }
 }
 
 function checkRacing(json, resultEvents) {
-    
-    resultEvents.push("event 6");
+    if (Object.keys(json["icons"]).includes("icon17")) {
+        return;
+    }
+    if (json["status"]["state"] != "Okay") {
+        return;
+    }
+    for (let log of Object.values(json["log"])) {
+        if (Math.floor(Date.now() / 1000) - log["timestamp"] > 900) {
+            resultEvents.push("Racing ready");
+            return;
+        }
+        if (log["title"] == "Racing leave official race") {
+            return;
+        }
+    }
 }
 
 export default createEvents;
