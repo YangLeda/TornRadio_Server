@@ -15,7 +15,7 @@ const FETCH_FACTION_INTERVAL = 10000;  // 10s
 const FETCH_SPY_DOC_INTERVAL = 180000;  // 3 minutes
 const FETCH_ALL_PLAYERS_INTERVAL = 1800000;  // 30 minutes
 const FETCH_TORNSTATS_SPY_INTERVAL = 1800000;  // 30 minutes
-const FETCH_MONITOR_INTERVAL = 60000;  // 60s
+const FETCH_MONITOR_INTERVAL = 60000;  // 10s
 
 let enemyFactionId = MY_FACTION_ID;
 let playerCache = new Map();
