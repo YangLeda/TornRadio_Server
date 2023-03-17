@@ -38,7 +38,7 @@ function checkTravel(json, resultEvents) {
 
 function checkHospital(json, resultEvents) {
     if (json["states"]["hospital_timestamp"] - json["timestamp"] > 0 && json["states"]["hospital_timestamp"] - json["timestamp"] <= 300) {
-        resultEvents.push("Out of hosipital in 5 min");
+        resultEvents.push("Out of hosp in 5 min");
     }
 }
 
