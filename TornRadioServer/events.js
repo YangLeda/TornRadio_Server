@@ -14,6 +14,7 @@ function createEvents(json) {
 
 function createReminderEvents(json) {
     let reminderEvents = [];
+    checkRemindOC(json, reminderEvents);
     checkRemindRefill(json, reminderEvents);
     checkRemindRehab(json, reminderEvents);
     checkRemindMission(json, reminderEvents);
@@ -113,6 +114,12 @@ function checkRemindMission(json, reminderEvents) {
             reminderEvents.push("Mission");
             return;
         }
+    }
+}
+
+function checkRemindOC(json, reminderEvents) {
+    if (Object.keys(json["icons"]).includes("icon86")) {
+        reminderEvents.push("OC");
     }
 }
 
