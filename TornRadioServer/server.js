@@ -10,9 +10,9 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 const app = express();
 const port = 3001;
 const MY_FACTION_ID = process.env.FACTION_ID;
-const API_REQUEST_DELAY = 200;
-const FETCH_FACTION_INTERVAL = 10000;  // 10s
-const FETCH_SPY_DOC_INTERVAL = 180000;  // 3 minutes
+const API_REQUEST_DELAY = 500;
+const FETCH_FACTION_INTERVAL = 30000;  // 30s
+const FETCH_SPY_DOC_INTERVAL = 600000;  // 10 minutes
 const FETCH_ALL_PLAYERS_INTERVAL = 1800000;  // 30 minutes
 const FETCH_TORNSTATS_SPY_INTERVAL = 1800000;  // 30 minutes
 const FETCH_MONITOR_INTERVAL = 20000;  // 20s

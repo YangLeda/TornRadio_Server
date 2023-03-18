@@ -73,7 +73,7 @@ function checkRacing(json, resultEvents) {
 }
 
 function checkEducation(json, resultEvents) {
-    if (Object.keys(json["icons"]).includes("icon20")) {
+    if (!Object.keys(json["icons"]).includes("icon19")) {
         resultEvents.push("Education done");
     }
 }
