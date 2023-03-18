@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 import express from "express";
 import cors from "cors";
 import logger from "./logger.js";
-import createEvents from "./events.js";
+import { createEvents, createReminderEvents } from "./events.js";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
 const app = express();
@@ -27,6 +27,7 @@ monitorEventsJson["server_error"] = "Initiating";
 monitorEventsJson["last_api_timestamp"] = 0;
 monitorEventsJson["notifications"] = {};
 monitorEventsJson["events"] = [];
+monitorEventsJson["reminder_events"] = [];
 
 logger("start");
 
@@ -97,6 +98,7 @@ async function handleMonitor() {
   monitorEventsJson["last_api_timestamp"] = json["timestamp"];
   monitorEventsJson["notifications"] = json["notifications"];
   monitorEventsJson["events"] = createEvents(json);
+  monitorEventsJson["reminder_events"] = createReminderEvents(json);
 }
 
 async function fetchMonitor() {
@@ -104,7 +106,7 @@ async function fetchMonitor() {
   while (retryCount < 3) {
     retryCount++;
     await new Promise(resolve => setTimeout(resolve, API_REQUEST_DELAY));
-    const selections = "basic,profile,bars,cooldowns,education,timestamp,notifications,icons,log";
+    const selections = "basic,profile,bars,cooldowns,refills,missions,timestamp,notifications,icons,log";
     let res = await fetch(`https://api.torn.com/user/?selections=${selections}&key=${process.env.TORN_MONITOR_API_KEY}`);
     let json = await res.json();
     if (json["timestamp"]) {
