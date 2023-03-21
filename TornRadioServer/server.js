@@ -29,8 +29,6 @@ monitorEventsJson["notifications"] = {};
 monitorEventsJson["events"] = [];
 monitorEventsJson["reminder_events"] = [];
 
-logger("start");
-
 app.use(
   cors({
     origin: "*",
@@ -42,7 +40,6 @@ app.get("/faction", async (req, res) => {
 });
 
 app.get("/cache", async (req, res) => {
-  logger(`cache API access ${req.ip}`);
   res.send(getCacheJson());
 });
 
@@ -61,6 +58,8 @@ app.get("/monitor_raw", async (req, res) => {
 app.listen(port, () => {
   logger(`TornRadio server start listening on port ${port}`);
 });
+
+await getEnemyFactionId();
 
 fetchFaction(enemyFactionId);
 setInterval(async () => {
@@ -112,10 +111,10 @@ async function fetchMonitor() {
     if (json["timestamp"]) {
       return json;
     } else {
-      logger("fetchMonitor failed and retry count " + retryCount);
+      logger("Error: fetchMonitor failed and retry count " + retryCount);
     }
   }
-  logger("fetchMonitor failed");
+  logger("Error: fetchMonitor failed");
   return null;
 }
 
@@ -158,7 +157,7 @@ async function fetchFaction(factionId) {
       factionCache = json;
       return json;
     } else {
-      logger("fetchFaction " + factionId + " failed and retry");
+      logger("Error: fetchFaction " + factionId + " failed and retry");
     }
   }
 }
@@ -171,17 +170,12 @@ async function fetchPlayer(playerId) {
     if (json["player_id"] && json["player_id"] == playerId) {
       return json;
     } else {
-      logger("fetchPlayer " + playerId + " failed and retry");
+      logger("Error: fetchPlayer " + playerId + " failed and retry");
     }
   }
 }
 
 async function fetchTornStatsSpy(factionId) {
-  // if (factionId <= 0 || factionId == 9356 || factionId == 36134 || factionId == 16424 || factionId == 10741 || factionId == 20465 || factionId == 27902 || factionId == 16335) {
-  //   logger("fetchTornStatsSpy hide friendly faction spy " + factionId);
-  //   return null;
-  // }
-
   let retryCount = 0;
   while (retryCount < 2) {
     retryCount++;
@@ -191,7 +185,7 @@ async function fetchTornStatsSpy(factionId) {
     if (json["status"] && json["status"] == true && json["faction"] && json["faction"]["members"]) {
       return json;
     } else {
-      logger("fetchTornStatsSpy " + factionId + " failed and retry count " + retryCount);
+      logger("Error: fetchTornStatsSpy " + factionId + " failed and retry count " + retryCount);
     }
   }
   return null;
@@ -200,7 +194,7 @@ async function fetchTornStatsSpy(factionId) {
 async function fillTornStatsSpyToCache() {
   const json = await fetchTornStatsSpy(enemyFactionId);
   if (!json) {
-    logger("fillTornStatsSpyToCache failed to fetchTornStatsSpy " + enemyFactionId);
+    logger("Error: fillTornStatsSpyToCache failed to fetchTornStatsSpy " + enemyFactionId);
     return;
   }
   const members = json["faction"]["members"];
