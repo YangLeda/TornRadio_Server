@@ -10,12 +10,12 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 const app = express();
 const port = 3001;
 const MY_FACTION_ID = process.env.FACTION_ID;
-const API_REQUEST_DELAY = 500;
-const FETCH_FACTION_INTERVAL = 30000;  // 30s
-const FETCH_SPY_DOC_INTERVAL = 600000;  // 10 minutes
-const FETCH_ALL_PLAYERS_INTERVAL = 1800000;  // 30 minutes
-const FETCH_TORNSTATS_SPY_INTERVAL = 1800000;  // 30 minutes
-const FETCH_MONITOR_INTERVAL = 20000;  // 20s
+const API_REQUEST_DELAY = 300;
+const FETCH_ALL_PLAYERS_INTERVAL = 3600000;  // 1h
+const FETCH_SPY_DOC_INTERVAL = 3600000;  // 1h
+const FETCH_TORNSTATS_SPY_INTERVAL = 3600000;  // 1h
+const FETCH_FACTION_INTERVAL = 60000;  // 1m
+const FETCH_MONITOR_INTERVAL = 15000;  // 15s
 
 let enemyFactionId = MY_FACTION_ID;
 let playerCache = new Map();
@@ -177,10 +177,10 @@ async function fetchPlayer(playerId) {
 }
 
 async function fetchTornStatsSpy(factionId) {
-  if (factionId <= 0 || factionId == 9356 || factionId == 36134 || factionId == 16424 || factionId == 10741 || factionId == 20465 || factionId == 27902 || factionId == 16335) {
-    logger("fetchTornStatsSpy hide friendly faction spy " + factionId);
-    return null;
-  }
+  // if (factionId <= 0 || factionId == 9356 || factionId == 36134 || factionId == 16424 || factionId == 10741 || factionId == 20465 || factionId == 27902 || factionId == 16335) {
+  //   logger("fetchTornStatsSpy hide friendly faction spy " + factionId);
+  //   return null;
+  // }
 
   let retryCount = 0;
   while (retryCount < 2) {

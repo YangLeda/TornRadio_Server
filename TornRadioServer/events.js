@@ -22,22 +22,22 @@ function createReminderEvents(json) {
 }
 
 function checkCooldowns(json, resultEvents) {
-    if (json["cooldowns"]["drug"] <= 10) {
+    if (json["cooldowns"]["drug"] <= 30) {  // 30s
         resultEvents.push("No drug cooldown");
     }
-    if (json["cooldowns"]["medical"] <= 1800) {
+    if (json["cooldowns"]["medical"] <= 3600) {  // 1h
         resultEvents.push("No medical cooldown");
     }
-    if (json["cooldowns"]["booster"] <= 1800) {
+    if (json["cooldowns"]["booster"] <= 36000) {  // 10h
         resultEvents.push("No booster cooldown");
     }
 }
 
 function checkBars(json, resultEvents) {
-    if (json["energy"]["fulltime"] <= 1800) {
+    if (json["energy"]["fulltime"] <= 1800) {  // 30m
         resultEvents.push("Full energy bar");
     }
-    if (json["nerve"]["fulltime"] <= 1800) {
+    if (json["nerve"]["fulltime"] <= 1800) {  // 30m
         resultEvents.push("Full nerve bar");
     }
 }
