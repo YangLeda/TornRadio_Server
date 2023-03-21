@@ -178,6 +178,7 @@ async function fetchTornStatsSpy(factionId) {
   while (retryCount < 2) {
     retryCount++;
     await new Promise(resolve => setTimeout(resolve, API_REQUEST_DELAY));
+    logger(`22222` + factionId);
     let res = await fetch(`https://www.tornstats.com/api/v2/${process.env.TORNSTATS_API_KEY}/spy/faction/${factionId}`);
     let json = await res.json();
     if (json["status"] && json["status"] == true && json["faction"] && json["faction"]["members"]) {
@@ -218,10 +219,12 @@ async function getEnemyFactionId() {
   const json = await fetchFaction(MY_FACTION_ID);
   let rwJson = json["ranked_wars"];
   if (Object.keys(rwJson).length <= 0) {
+    logger(`1111111111 0`);
     return 0;
   }
   let keys = Object.keys(rwJson[Object.keys(rwJson)[0]]["factions"]);
   let enemyFactionId = parseInt(keys[0]) == parseInt(MY_FACTION_ID) ? parseInt(keys[1]) : parseInt(keys[0]);
+  logger(`1111111111` + enemyFactionId);
   return enemyFactionId;
 }
 
