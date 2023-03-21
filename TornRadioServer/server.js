@@ -59,8 +59,6 @@ app.listen(port, () => {
   logger(`TornRadio server start listening on port ${port}`);
 });
 
-await getEnemyFactionId();
-
 fetchFaction(enemyFactionId);
 setInterval(async () => {
   fetchFaction(enemyFactionId);
@@ -192,6 +190,7 @@ async function fetchTornStatsSpy(factionId) {
 }
 
 async function fillTornStatsSpyToCache() {
+  await getEnemyFactionId();
   const json = await fetchTornStatsSpy(enemyFactionId);
   if (!json) {
     logger("Error: fillTornStatsSpyToCache failed to fetchTornStatsSpy " + enemyFactionId);
@@ -219,7 +218,6 @@ async function getEnemyFactionId() {
   const json = await fetchFaction(MY_FACTION_ID);
   let rwJson = json["ranked_wars"];
   if (Object.keys(rwJson).length <= 0) {
-    logger("getEnemyFactionId no current RW");
     return 0;
   }
   let keys = Object.keys(rwJson[Object.keys(rwJson)[0]]["factions"]);
@@ -233,7 +231,6 @@ async function fetchAllPlayersToCache() {
     enemyFactionId = temp;
     playerCache.clear();
     spyData.clear();
-    logger("fetchAllPlayersToCache enemy faction ID changed, clear cache maps");
   }
   const factionJson = await fetchFaction(enemyFactionId);
   const memberIds = Object.keys(factionJson.members);
