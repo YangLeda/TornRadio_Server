@@ -22,10 +22,10 @@ function createReminderEvents(json) {
 }
 
 function checkCooldowns(json, resultEvents) {
-    if (json["cooldowns"]["drug"] <= 30) {  // 30s
+    if (json["cooldowns"]["drug"] <= 10) {  // 10s
         resultEvents.push("No drug cooldown");
     }
-    if (json["cooldowns"]["medical"] <= 3600) {  // 1h
+    if (json["cooldowns"]["medical"] <= 7200) {  // 2h
         resultEvents.push("No medical cooldown");
     }
     if (json["cooldowns"]["booster"] <= 36000) {  // 10h
@@ -61,15 +61,7 @@ function checkRacing(json, resultEvents) {
     if (json["status"]["state"] != "Okay") {
         return;
     }
-    for (let log of Object.values(json["log"])) {
-        if (Math.floor(Date.now() / 1000) - log["timestamp"] > 900) {
-            resultEvents.push("Racing ready");
-            return;
-        }
-        if (log["title"] == "Racing leave official race") {
-            return;
-        }
-    }
+    resultEvents.push("Racing ready");
 }
 
 function checkEducation(json, resultEvents) {
@@ -118,9 +110,9 @@ function checkRemindMission(json, reminderEvents) {
 }
 
 function checkRemindOC(json, reminderEvents) {
-    if (Object.keys(json["icons"]).includes("icon86")) {
-        reminderEvents.push("OC");
-    }
+    // if (Object.keys(json["icons"]).includes("icon86")) {
+    //     reminderEvents.push("OC");
+    // }
 }
 
 export { createEvents, createReminderEvents };
